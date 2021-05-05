@@ -2,31 +2,29 @@ import React, { useState } from 'react';
 
 const Header = ({title}) => (<h1>{title}</h1>)
 
-const Display = ({name, value}) => (<p>{name} {value}</p>)
+const Statistic = ({text, value}) => (<p>{text} {value}</p>)
 
 const Button = ({handleClick, text}) => (
   <button onClick={handleClick}>{text}</button>  
 )
 
-const Statistics = (props) =>{
-  const {good,neutral,bad,all} = props.stats;
+const Statistics = ({stats}) =>{
+  const {good,neutral,bad,all} = stats;
   
-  const getAverage = () => {
-    return ((good + (-bad) )/all)
-  }
+  const getAverage = () => ((good + (-bad) )/all)
   
-  const getPositive = () =>{
-    return (((good * 100)/all) + '%');
-  }
+  const getPositive = () => (((good * 100)/all) + '%')
+  
+  if (all === 0) return (<p>No feedback given</p>);
   
   return (
     <div>
-      <Display name='Good' value={good}/>
-      <Display name='Neutral' value={neutral}/>
-      <Display name='Bad' value={bad}/>
-      <Display name='All' value={all}/>
-      <Display name='Average' value={getAverage()}/>
-      <Display name='Positive' value={getPositive()}/>
+      <Statistic text='Good:' value={good}/>
+      <Statistic text='Neutral:' value={neutral}/>
+      <Statistic text='Bad:' value={bad}/>
+      <Statistic text='All:' value={all}/>
+      <Statistic text='Average:' value={getAverage()}/>
+      <Statistic text='Positive:' value={getPositive()}/>
     </div>
   )
 }
@@ -62,10 +60,8 @@ const App = () => {
       <Button handleClick={handleBadClick} text='Bad'/>
       
       <Header title='Statistics'/>
-      { all > 0 ? 
-        <Statistics stats={{good,neutral,bad,all}}/> 
-        : <p>No feedback given.</p>
-      }
+      
+      <Statistics stats={{good,neutral,bad,all}}/> 
       
     </div>
   );
