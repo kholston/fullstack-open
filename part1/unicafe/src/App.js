@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 const Header = ({title}) => (<h1>{title}</h1>)
 
-const Statistic = ({text, value}) => (<p>{text} {value}</p>)
+const Statistic = ({text, value}) => (<tr><td>{text}</td><td>{value}</td></tr>)
 
 const Button = ({handleClick, text}) => (
   <button onClick={handleClick}>{text}</button>  
@@ -16,16 +16,18 @@ const Statistics = ({stats}) =>{
   const getPositive = () => (((good * 100)/all) + '%')
   
   if (all === 0) return (<p>No feedback given</p>);
-  
+
   return (
-    <div>
-      <Statistic text='Good:' value={good}/>
-      <Statistic text='Neutral:' value={neutral}/>
-      <Statistic text='Bad:' value={bad}/>
-      <Statistic text='All:' value={all}/>
-      <Statistic text='Average:' value={getAverage()}/>
-      <Statistic text='Positive:' value={getPositive()}/>
-    </div>
+    <table>
+      <tbody>
+        <Statistic text='Good:' value={good}/>
+        <Statistic text='Neutral:' value={neutral}/>
+        <Statistic text='Bad:' value={bad}/>
+        <Statistic text='All:' value={all}/>
+        <Statistic text='Average:' value={getAverage()}/>
+        <Statistic text='Positive:' value={getPositive()}/>
+      </tbody>
+    </table>
   )
 }
 
