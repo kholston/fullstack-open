@@ -1,12 +1,13 @@
 import React, {useState} from 'react'
 
 const Anecdote = ({text}) => (<div>{text}</div>)
+const VoteCount = ({count}) => (<div>has {count} votes</div>)
 const Button = ({handleClick, text}) => (<button onClick={handleClick}>{text}</button>)
 
 
 const App = () =>{
   
-  const [selected, setSelected] = useState(0);
+  
   
   const anecdotes = [
     'If it hurts, do it more often',
@@ -17,13 +18,25 @@ const App = () =>{
     'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.'
   ]
   
+  const [selected, setSelected] = useState(0);
+  const [votes, setVotes] = useState(new Array(anecdotes.length).fill(0));
+ 
+  
   const randomNum = (max) => Math.floor(Math.random() * max);
   
   const handleNextClick = () => (setSelected(randomNum(anecdotes.length - 1)))
+  const handleVoteClick = () => {
+    const newVotes = [...votes];
+    newVotes[selected] += 1;
+    setVotes(newVotes);
+  }
+  
   
   return (
     <div>
       <Anecdote text={anecdotes[selected]}/>
+      <VoteCount count={votes[selected]}/>
+      <Button handleClick={handleVoteClick} text='vote'/>
       <Button handleClick={handleNextClick} text='next anecdote'/>
     </div>
   )
