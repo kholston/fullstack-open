@@ -1,24 +1,69 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
 
-function App() {
+const Header = ({course}) =>{
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <h1>{course.name}</h1>
+  )
+}
+
+const Part = ({part}) =>{
+  return(
+    <p> {part.name} {part.exercises} </p>
+  )
+}
+
+const Content = ({course}) =>{
+  return(
+    <div>
+      {course.parts.map(part => <Part key={part.id} part={part}/>)}
     </div>
+  )
+}
+
+const Course = ({course}) => {
+  return(
+    <div>
+      <Header course={course}/>
+      <Content course={course}/>
+    </div>
+  )
+}
+
+const Total = (props) => {
+  const parts = props.parts
+  const exercises = parts.map(part => part.exercises)
+  const total = exercises.reduce((total,val) => total + val)
+ 
+  return (
+  <p>Number of exercises {total}</p>
+  )
+}
+
+
+const App = () => {
+  const course = {
+    id: 1,
+    name: 'Half Stack application development',
+    parts : [
+      {
+        name: 'Fundamentals of React',
+        exercises: 10,
+        id: 1
+      },
+      {
+        name: 'Using props to pass data',
+        exercises: 7,
+        id: 2
+      },
+      {
+        name : 'State of a component',
+        exercises : 14,
+        id: 3
+      }
+    ]
+  }
+  return (
+    <Course course={course} />
   );
 }
 
