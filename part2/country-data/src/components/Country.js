@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Country = ({country, detail})=>{
+const Country = ({country, detail, handleShowClick})=>{
   if(detail){
     return(
       <div>
@@ -18,7 +18,12 @@ const Country = ({country, detail})=>{
       </div>
     )
   } else {
-    return(<p>{country.name}</p>)
+    return(
+      <div>
+        {country.name}
+        <button onClick={() => handleShowClick(country)}>show</button>
+      </div>
+    )
   }
 }
 

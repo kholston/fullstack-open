@@ -20,17 +20,24 @@ function App() {
     setNewSearch(event.target.value)
   }
 
+  const handleShowClick = (country) => {
+    setNewSearch(country.name)
+  }
+
+  const clearSearch = () => {
+    setNewSearch('')
+  }
   const countriesToShow = countries.filter(country =>( 
     country.name.toLowerCase().includes(newSearch.toLowerCase())
   ))
 
   return (
     <div>
-      <Search handleChange={handleSearchChange} inputVal={newSearch}/>
+      <Search clearSearch={clearSearch} handleChange={handleSearchChange} inputVal={newSearch}/>
       {newSearch === '' ? null :
         countriesToShow.length > 10 ? <p>Too many matches, specify another filter</p>:
         countriesToShow.length === 1 ? countriesToShow.map(country => <Country key={country.numericCode} country={country} detail={true}/>): 
-        countriesToShow.map(country => <Country key={country.numericCode} country={country} detail={false}/>)
+        countriesToShow.map(country => <Country key={country.numericCode} country={country} detail={false} handleShowClick={handleShowClick}/>)
       }
     </div>
   );
