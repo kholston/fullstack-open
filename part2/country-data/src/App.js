@@ -1,7 +1,9 @@
 import React, {useState, useEffect} from 'react'
 import axios from 'axios'
 import Search from './components/Search'
-import Country from './components/Country'
+import Result from './components/Result'
+import DetailView from './components/DetailView'
+
 
 
 function App() {
@@ -24,6 +26,7 @@ function App() {
     setNewSearch(country.name)
   }
 
+
   const clearSearch = () => {
     setNewSearch('')
   }
@@ -36,8 +39,8 @@ function App() {
       <Search clearSearch={clearSearch} handleChange={handleSearchChange} inputVal={newSearch}/>
       {newSearch === '' ? null :
         countriesToShow.length > 10 ? <p>Too many matches, specify another filter</p>:
-        countriesToShow.length === 1 ? countriesToShow.map(country => <Country key={country.numericCode} country={country} detail={true}/>): 
-        countriesToShow.map(country => <Country key={country.numericCode} country={country} detail={false} handleShowClick={handleShowClick}/>)
+        countriesToShow.length === 1 ? countriesToShow.map(country => <DetailView key={country.numericCode} country={country} />): 
+        countriesToShow.map(country => <Result key={country.numericCode} country={country} handleShowClick={() => handleShowClick(country)}/>)
       }
     </div>
   );
