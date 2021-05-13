@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
+import personService from './services/persons'
 import Header from './components/Header'
 import PersonForm from './components/PersonForm'
 import Search from './components/Search'
@@ -12,12 +12,28 @@ const App = () => {
   const [filter, setFilter] = useState('')
 
   useEffect(()=>{
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response =>{
-        setPersons(response.data)
+    personService
+      .getAll()
+      .then(initalPersons =>{
+        setPersons(initalPersons)
       })
   },[])
+
+  const addPerson = (event) => {
+    event.preventDefault();
+    const personObject = {name: newName, number: newNumber}
+    if(persons.some(person => person.name === personObject.name)){
+      alert(`${newName} is already in the phonebook.`)
+    } else {
+      personService
+        .create(personObject)
+        .then(returnedPerson =>{
+          setPersons(persons.concat(returnedPerson))
+          setNewName('')
+          setNewNumber('')
+        })
+    }
+  } 
 
   const handleNameChange = (event) => {
     setNewName(event.target.value)
@@ -34,22 +50,6 @@ const App = () => {
   const personsToShow =  filter === '' ? persons : 
     persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()) )
     
-  
-  const addPerson = (event) => {
-    event.preventDefault();
-    const personObject = {name: newName, number: newNumber}
-    if(persons.some(person => person.name === personObject.name)){
-      alert(`${newName} is already in the phonebook.`)
-    } else {
-      axios
-        .post('http://localhost:3001/persons', personObject)
-        .then(response =>{
-          setPersons(persons.concat(response.data))
-          setNewName('')
-          setNewNumber('')
-        })
-    }
-  } 
 
   return (
     <div>
