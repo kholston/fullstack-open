@@ -12,7 +12,6 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
   const [notificationMessage, setNotificationMessage] = useState(null)
-  const [errorMessage, setErrorMessage] = useState(null)
   const [notificationType, setNotificationType] = useState(0)
 
   useEffect(()=>{
@@ -64,7 +63,8 @@ const App = () => {
         createNotificationMessage(1,message)
       })
       .catch(error => {
-        alert(`the person ${changedPerson.name} was already deleted from th server`)
+        const message = `${changedPerson.name} was already deleted from the server`
+        createNotificationMessage(2,message)
         setPersons(persons.filter(p => p.id !== changedPerson.id))
       })
   }
