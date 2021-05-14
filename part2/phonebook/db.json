@@ -2,7 +2,7 @@
   "persons": [
     {
       "name": "Arto Hellas",
-      "number": "040-123457",
+      "number": "040-123456",
       "id": 1
     },
     {
@@ -19,6 +19,16 @@
       "name": "Mary Poppendieck",
       "number": "39-23-6423122",
       "id": 4
+    },
+    {
+      "name": "Ron Fuches",
+      "number": "01-564-4567876",
+      "id": 5
+    },
+    {
+      "name": "Theo Huxtable",
+      "number": "01-476-2365456",
+      "id": 6
     }
   ]
 }
