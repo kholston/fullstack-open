@@ -35,7 +35,7 @@ const App = () => {
         setNewName('')
         setNewNumber('')
       })
-    }
+    
   } 
 
   const deletePerson = (personObject) => {
