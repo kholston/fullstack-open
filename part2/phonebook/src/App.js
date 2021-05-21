@@ -25,23 +25,16 @@ const App = () => {
   const addPerson = (event) => {
     event.preventDefault();
     const personObject = {name: newName, number: newNumber}
-    const personCheck = persons.find(person => person.name === personObject.name)
-    if(personCheck){
-      window.confirm(`${newName} is already in the phonebook, replace the old number with a new one?`)
-      const changedPerson = {...personCheck, number: newNumber}
-      updatePerson(changedPerson)
-      setNewName('')
-      setNewNumber('')
-    } else {
-      personService
-        .create(personObject)
-        .then(returnedPerson =>{
-          setPersons(persons.concat(returnedPerson))
-          const message = `${returnedPerson.name} created successfully!`
-          createNotificationMessage(1,message)
-          setNewName('')
-          setNewNumber('')
-        })
+   
+    personService
+      .create(personObject)
+      .then(returnedPerson =>{
+        setPersons(persons.concat(returnedPerson))
+        const message = `${returnedPerson.name} created successfully!`
+        createNotificationMessage(1,message)
+        setNewName('')
+        setNewNumber('')
+      })
     }
   } 
 
