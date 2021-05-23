@@ -22,29 +22,19 @@ const App = () => {
       })
   },[])
 
-  const addPerson = (event) => {
-    event.preventDefault();
-    const personObject = {name: newName, number: newNumber}
-   
-    personService
-      .create(personObject)
-      .then(returnedPerson =>{
-        setPersons(persons.concat(returnedPerson))
-        const message = `${returnedPerson.name} created successfully!`
-        createNotificationMessage(1,message)
-        setNewName('')
-        setNewNumber('')
-      })
-    
-  } 
+  const clearInput = () => {
+    setNewName('')
+    setNewNumber('')
+  }
 
   const deletePerson = (personObject) => {
-    window.confirm(`Delete ${personObject.name} ?`)
-    personService
-      .deletePerson(personObject.id)
-      .then(
-        setPersons(persons.filter(p => p.id !== personObject.id))
-      )
+    if(window.confirm(`Delete ${personObject.name} ?`)){
+      personService
+        .deletePerson(personObject.id)
+        .then(
+          setPersons(persons.filter(p => p.id !== personObject.id))
+        )
+    }
   }
 
   const updatePerson = (changedPerson) => {
@@ -54,13 +44,37 @@ const App = () => {
         setPersons(persons.map(person => person.id !== returnedPerson.id ? person : returnedPerson))
         const message = `${changedPerson.name} updated successfully!`
         createNotificationMessage(1,message)
+        clearInput()
       })
       .catch(error => {
         const message = `${changedPerson.name} was already deleted from the server`
         createNotificationMessage(2,message)
         setPersons(persons.filter(p => p.id !== changedPerson.id))
+        clearInput()
       })
   }
+
+  const addPerson = (event) => {
+    event.preventDefault();
+    const personObject = {name: newName, number: newNumber}
+    const entryExists = persons.find(person => person.name === personObject.name)
+
+    if(entryExists){
+      if(window.confirm(`${personObject.name} is already in the phonebook. Do you want to update the entry?`)){
+        const person = {...entryExists, number: personObject.number}
+        updatePerson(person)
+      }
+    } else {
+      personService
+      .create(personObject)
+      .then(returnedPerson =>{
+        setPersons(persons.concat(returnedPerson))
+        const message = `${returnedPerson.name} created successfully!`
+        createNotificationMessage(1,message)
+        clearInput()
+      })
+    }
+  } 
 
   const createNotificationMessage = (type, message) => {
     setNotificationType(type)
