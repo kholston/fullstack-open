@@ -73,13 +73,17 @@ const App = () => {
         createNotificationMessage(1,message)
         clearInput()
       })
+      .catch(error => {
+        console.log(error.response.data);
+        const message = error.response.data.error;
+        createNotificationMessage(2, message);
+      })
     }
   } 
 
   const createNotificationMessage = (type, message) => {
     setNotificationType(type)
     setNotificationMessage(message)
-    debugger
     setTimeout(()=>{
       setNotificationType(0)
       setNotificationMessage(null)
