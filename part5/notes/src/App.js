@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react'
 import noteService from './services/notes'
 import loginService from './services/login'
 import Note from './components/Note'
+import Togglable from './components/Togglable'
 import NoteForm from './components/NoteForm'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
@@ -16,6 +17,7 @@ const App = () =>{
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  const [loginVisible, setLoginVisible] = useState(false)
 
   useEffect(()=> {
     noteService
@@ -111,27 +113,33 @@ const App = () =>{
   }
 
 
+
   return (
     <div>
       <h1>Notes</h1>
       <Notification message={errorMessage}/>
 
       {user === null ?
-        <LoginForm 
-          handleLogin={handleLogin} 
-          username={username} 
-          handleUsernameChange={handleUsernameChange} 
-          passwword={password} 
-          handlePasswordChange={handlePasswordChange} 
-        /> :
+        <Togglable buttonLabel='login'>
+          <LoginForm 
+            handleLogin={handleLogin} 
+            username={username} 
+            handleUsernameChange={handleUsernameChange} 
+            passwword={password} 
+            handlePasswordChange={handlePasswordChange}   
+          />
+        </Togglable>
+        :
         <div>
           <p>{user.name} logged-in</p>
           <button onClick={handleLogout}>logout</button>
-          <NoteForm 
-            addNote={addNote}
-            handleNoteChange={handleNoteChange}
-            newNote={newNote}
-          />
+          <Togglable buttonLabel='create note'>
+            <NoteForm 
+              addNote={addNote}
+              handleNoteChange={handleNoteChange}
+              newNote={newNote}
+            />
+          </Togglable>
         </div>
       }
       <div>
