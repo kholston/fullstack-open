@@ -11,13 +11,9 @@ import Footer from './components/Footer'
 
 const App = () =>{
   const [notes,setNotes] = useState([])
-  const [newNote, setNewNote] = useState('a new note...')
   const [showAll, setShowAll] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null)
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [loginVisible, setLoginVisible] = useState(false)
 
   useEffect(()=> {
     noteService
@@ -36,23 +32,12 @@ const App = () =>{
     }
   },[])
   
-  const addNote = (event) =>{
-    event.preventDefault()
-    const noteObject = {
-      content: newNote,
-      important: Math.random() < 0.5, 
-    }
-    
+  const addNote = (noteObject) =>{ 
     noteService
       .create(noteObject)
       .then(returnedNote => {
         setNotes(notes.concat(returnedNote))
-        setNewNote('')
       })
-  }
-
-  const handleNoteChange = (event) =>{
-    setNewNote(event.target.value)
   }
 
   const toggleImportanceOf = (id) => {
@@ -74,13 +59,10 @@ const App = () =>{
 
   const notesToShow = showAll ? notes: notes.filter(note => note.important)
 
-  const handleLogin = async (event) => {
-    event.preventDefault()
+  const handleLogin = async (credentials) => {
     
     try {
-      const user = await loginService.login({
-        username, password
-      })
+      const user = await loginService.login(credentials)
 
       window.localStorage.setItem(
         'loggedNoteappUser', JSON.stringify(user)
@@ -88,22 +70,12 @@ const App = () =>{
 
       noteService.setToken(user.token)
       setUser(user)
-      setUsername('')
-      setPassword('')
     } catch (error) {
       setErrorMessage('Wrong credentials')
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
     }
-  }
-
-  const handleUsernameChange = (event) => {
-    setUsername(event.target.value)
-  }
-
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value)
   }
 
   const handleLogout = () => {
@@ -121,13 +93,7 @@ const App = () =>{
 
       {user === null ?
         <Togglable buttonLabel='login'>
-          <LoginForm 
-            handleLogin={handleLogin} 
-            username={username} 
-            handleUsernameChange={handleUsernameChange} 
-            passwword={password} 
-            handlePasswordChange={handlePasswordChange}   
-          />
+          <LoginForm handleLogin={handleLogin}/>
         </Togglable>
         :
         <div>
@@ -135,9 +101,7 @@ const App = () =>{
           <button onClick={handleLogout}>logout</button>
           <Togglable buttonLabel='create note'>
             <NoteForm 
-              addNote={addNote}
-              handleNoteChange={handleNoteChange}
-              newNote={newNote}
+              createNote={addNote}
             />
           </Togglable>
         </div>
