@@ -1,6 +1,6 @@
-import React, {useState} from 'react'
+import React, {useState, useImperativeHandle} from 'react'
 
-const Togglable = (props) => {
+const Togglable = (props, ref) => {
   const [visible, setVisible] = useState(false)
 
   const hideWhenVisible = {display: visible ? 'none': ''}
@@ -9,6 +9,12 @@ const Togglable = (props) => {
   const toggleVisiblity = () => {
     setVisible(!visible)
   }
+
+  useImperativeHandle(ref, () => {
+    return{
+      toggleVisiblity
+    }
+  })
 
   return (
     <div>
