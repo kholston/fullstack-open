@@ -51,30 +51,43 @@ describe('Note App', function(){
       cy.contains('a note created by cypress')
     })
 
-    describe('and a note exists', function(){
+    describe('and serveral notes exists', function(){
       beforeEach(function(){
         // cy.contains('new note').click()
         // cy.get('#noteInput').type('another note cypress')
         // cy.get('#noteFormSubmit').click()
-        cy.createNote({
-          content: 'another note cypress',
-          important: false
-        })
+
+        // cy.createNote({
+        //   content: 'another note cypress',
+        //   important: false
+        // })
+        cy.createNote({ content: 'first note', important: false })
+        cy.createNote({ content: 'second note', important: false })
+        cy.createNote({ content: 'third note', important: false })
       })
 
-      it('it can be made important', function() {
-        cy.contains('another note cypress')
-          .contains('make important')
+      it('one of those can be made important', function() {
+        cy.contains('second note')
+          .parent()
+          .find('button')
+          .as('theButton')
+          // .contains('make important')
+
+        cy.get('@theButton')
           .click()
 
-        cy.contains('another note cypress')
-          .contains('make not important')
+        // cy.contains('second note')
+        //   .parent()
+        //   .find('button')
+        //   //.contains('make not important')
+        //   .should('contain', 'make not important')
 
+        cy.get('@theButton').should('contain', 'make not important')
       })
     })
   })
 
-  it.only('login fails with wrong password', function(){
+  it('login fails with wrong password', function(){
     cy.contains('login').click()
     cy.get('#username').type('testUser')
     cy.get('#password').type('wrong password')
