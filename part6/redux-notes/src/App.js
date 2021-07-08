@@ -6,10 +6,6 @@ import './App.css';
 
 
 const App = () => {
-  const filterSelected = (value) => {
-    console.log(value)
-  }
-
   return (
     <div>
       <NewNote/>
