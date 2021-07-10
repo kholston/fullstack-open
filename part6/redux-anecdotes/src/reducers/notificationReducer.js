@@ -1,4 +1,4 @@
-const notificationAtTheStart = 'Welcome to Anecdotes'
+const notificationAtTheStart = null
 
 export const setNotification = (content) => {
   return{
@@ -10,7 +10,7 @@ export const setNotification = (content) => {
 export const removeNotification = () => {
   return{
     type: 'REMOVE_NOTIFICATION',
-    data: 'Vote for an Anecdote or Create a new Anecdote'
+    data: null
   }
 }
 
