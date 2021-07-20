@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import './index.css';
 
 const Home = () => (
@@ -16,38 +17,35 @@ const Users = () => (
 
 
 const App = () => {
-  const [page, setPage] = useState('home')
-
-  const toPage = (page) => (event) => {
-    event.preventDefault()
-    setPage(page)
-  }
-
-  const content = () => {
-    switch(page){
-      case 'home':
-        return <Home/>
-      case 'notes':
-        return <Notes/>
-      case 'users':
-        return <Users/>
-      default:
-        return <Home/>
-    }
-  }
-
   const padding = {
     padding: 5
   }
 
   return(
-    <div>
-      <div><a href="" onClick={toPage('home')} style={padding}>home</a></div>
-      <div><a href="" onClick={toPage('notes')} style={padding}>notes</a></div>
-      <div><a href="" onClick={toPage('users')} style={padding}>users</a></div>
+    <Router>
+      <div>
+        <Link style={padding} to='/'>home</Link>
+        <Link style={padding} to='/notes'>notes</Link>
+        <Link style={padding} to='/users'>users</Link>
+      </div>
 
-      {content()}
-    </div>
+      <Switch>
+        <Route path='/notes'>
+          <Notes/>
+        </Route>
+        <Route path='/users'>
+          <Users/>
+        </Route>
+        <Route path='/'>
+          <Home/>
+        </Route>
+      </Switch>
+
+      <div>
+        <i>Note app, Department of Computer Science 2021</i>
+      </div>
+    </Router>
+    
   )
 }
 
