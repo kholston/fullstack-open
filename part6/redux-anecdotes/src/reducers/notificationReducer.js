@@ -1,14 +1,21 @@
-const notificationAtTheStart = null
+let currentTimeoutID = null
 
 export const setNotification = (content, time) => {
-  return async dispatch => {
+  if(currentTimeoutID !== null){
+    clearTimeout(currentTimeoutID)
+    currentTimeoutID = null
+  }
+  return async dispatch => { 
     dispatch({
       type: 'NEW_NOTIFICATION',
       data: content
     })
-    setTimeout(()=>{
+    
+    currentTimeoutID = setTimeout(()=>{
       dispatch(removeNotification())
-    }, (time * 1000))
+      currentTimeoutID = null
+   }, (time * 1000))
+
   }
 }
 
@@ -19,9 +26,8 @@ export const removeNotification = () => {
   }
 }
 
-const initialState = notificationAtTheStart
 
-const notificationReducer = (state = initialState, action) => {
+const notificationReducer = (state = null, action) => {
   switch(action.type){
     case 'NEW_NOTIFICATION':
     case 'REMOVE_NOTIFICATION':
