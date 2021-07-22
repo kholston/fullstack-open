@@ -7,7 +7,8 @@ import {
   Link,
   Redirect,
   useParams,
-  useHistory 
+  useHistory,
+  useRouteMatch 
 } from 'react-router-dom';
 import './index.css';
 
@@ -30,7 +31,7 @@ const Notes = ({notes}) => (
 
 const Note = ({notes}) => {
   const id = useParams().id
-  const note = notes.find(n => n.id = Number(id))
+  const note = notes.find(n => n.id === Number(id))
   return(
     <div>
       <h2>{note.content}</h2>
@@ -102,6 +103,11 @@ const App = () => {
     padding: 5
   }
 
+  const match = useRouteMatch('/notes/:id')
+  const note = match
+    ? notes.find(note = note.id === Number(match.params.id))
+    : null
+
   return(
     <Router>
       <div>
@@ -116,7 +122,7 @@ const App = () => {
 
       <Switch>
         <Route path='/notes/:id'>
-          <Note notes={notes}/>
+          <Note note={note}/>
         </Route>
         <Route path='/notes'>
           <Notes notes={notes}/>
@@ -141,6 +147,8 @@ const App = () => {
 }
 
 ReactDOM.render(
-  <App/>,
+  <Router>
+    <App/>,
+  </Router>
   document.getElementById('root')
 );
