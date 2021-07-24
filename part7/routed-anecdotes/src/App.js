@@ -63,25 +63,31 @@ const Footer = () => (
 
 
 const CreateNew = (props) => {
-  const content = useField('text')
-  const author = useField('text')
-  const info = useField('text')
+  const contentField = useField('text')
+  const authorField = useField('text')
+  const infoField = useField('text')
 
   const handleSubmit = (e) => {
     e.preventDefault()
     props.addNew({
-      content: content.value,
-      author: author.value,
-      info: info.value,
+      content: contentField.value,
+      author: authorField.value,
+      info: infoField.value,
       votes: 0
     })
   }
+  
+  const {contentReset, ...content} = contentField
+  const {authorReset, ...author} = authorField
+  const {infoReset, ...info} = contentField
 
   const handleReset = () => {
-    content.reset()
-    author.reset()
-    info.reset()
+    contentReset()
+    authorReset()
+    infoReset()
   }
+
+
 
   return (
     <div>
