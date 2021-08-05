@@ -1,36 +1,36 @@
-import React, { useState } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
+import { useDispatch } from 'react-redux'
+import { createBlog } from '../reducers/blogReducer'
+import { useField } from '../hooks/useField'
 
-const BlogForm = ({ createBlog }) => {
+const BlogForm = () => {
+  const dispatch = useDispatch()
 
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
+  const titleField = useField('text')
+  const authorField = useField('text')
+  const urlField = useField('text')
 
-  const handleTitleChange = (event) => {
-    setTitle(event.target.value)
-  }
-  const handleAuthorChange = (event) => {
-    setAuthor(event.target.value)
-  }
-  const handleUrlChange = (event) => {
-    setUrl(event.target.value)
+  const clearForm = () => {
+    titleField.reset()
+    authorField.reset()
+    urlField.reset()
   }
 
   const addBlog = (event) => {
     event.preventDefault()
 
-    createBlog({
-      title,
-      author,
-      url
-    })
-
-
-    setTitle('')
-    setAuthor('')
-    setUrl('')
+    const newBlog = {
+      title: titleField.value,
+      author: authorField.value,
+      url: urlField.value
+    }
+    console.log('blog being sent:', newBlog)
+    dispatch(createBlog(newBlog))
+    clearForm()
   }
+
+
 
   return(
     <div>
@@ -38,36 +38,15 @@ const BlogForm = ({ createBlog }) => {
       <form onSubmit={addBlog} id="blogForm">
         <div>
           title:
-          <input
-            type="text"
-            name='Title'
-            value={title}
-            onChange={handleTitleChange}
-            aria-label='title'
-            id='name'
-          />
+          <input type={titleField.type} value={titleField.value} onChange={titleField.onChange} />
         </div>
         <div>
           author:
-          <input
-            type="text"
-            name='Author'
-            value={author}
-            onChange={handleAuthorChange}
-            aria-label='author'
-            id='author'
-          />
+          <input type={authorField.type} value={authorField.value} onChange={authorField.onChange} />
         </div>
         <div>
           url:
-          <input
-            type="text"
-            name='URL'
-            value={url}
-            onChange={handleUrlChange}
-            aria-label='url'
-            id='url'
-          />
+          <input type={urlField.type} value={urlField.value} onChange={urlField.onChange} />
         </div>
         <button id="blogSubmit" type='submit'>create</button>
       </form>

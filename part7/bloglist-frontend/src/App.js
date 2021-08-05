@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { useDispatch } from 'react-redux'
 import LoginForm from './components/LoginForm'
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
@@ -6,22 +7,20 @@ import Togglable from './components/Togglable'
 import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import { createNotification } from './reducers/notificationReducer'
+import { initializeBlogs } from './reducers/blogReducer'
+import { useSelector } from 'react-redux'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
+  const dispatch = useDispatch()
+
+  const blogs = useSelector(state => state.blogs)
   const [user, setUser] = useState(null)
-  const [notificationMessage, setNotificationMessage] = useState(null)
-  const [notificationType, setNotificationType] = useState(0)
 
 
   const blogFormRef = useRef()
   const loginFormRef = useRef()
 
-  useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )
-  }, [])
 
   useEffect(() => {
     const loggedBloglistUser = window.localStorage.getItem('loggedBloglistUser')
@@ -32,14 +31,10 @@ const App = () => {
     }
   },[])
 
-  const createNotification = (message, type) => {
-    setNotificationMessage(message)
-    setNotificationType(type)
-    setTimeout(() => {
-      setNotificationMessage(null)
-      setNotificationType(0)
-    }, 5000)
-  }
+  useEffect(() => {
+    dispatch(initializeBlogs())
+  },[dispatch])
+
 
   const handleLogin = async (loginObject) => {
     loginFormRef.current.toggleVisibility()
@@ -49,9 +44,10 @@ const App = () => {
       window.localStorage.setItem('loggedBloglistUser', JSON.stringify(user))
       blogService.setToken(user.token)
       setUser(user)
+      dispatch(createNotification(`welcome ${user.username}`, 'success'))
     } catch (error) {
       const errorMessage = 'wrong username or password'
-      createNotification(errorMessage, 2)
+      dispatch(createNotification(errorMessage, 'error'))
     }
   }
 
@@ -61,57 +57,48 @@ const App = () => {
     window.localStorage.removeItem('loggedBloglistUser')
     setUser(null)
     blogService.setToken(null)
+    dispatch(createNotification('successfully logged out', 'success'))
   }
 
-  const createBlog = async (blogObject) => {
-    blogFormRef.current.toggleVisibility()
-    try {
-      const savedBlog = await blogService.create(blogObject)
-      setBlogs(blogs.concat(savedBlog))
-      const message = `a new blog ${savedBlog.title} by ${savedBlog.author} added`
-      createNotification(message, 1)
 
-    } catch (error) {
-      createNotification(error.message, 2)
-    }
-  }
 
-  const updateBlog = async (id) => {
-    const blog = blogs.find(blog => blog.id === id)
-    const changedBlog = {
-      user: blog.user,
-      likes: blog.likes + 1,
-      author: blog.author,
-      title: blog.title,
-      url: blog.url
-    }
+  // const updateBlog = async (id) => {
+  //   const blog = blogs.find(blog => blog.id === id)
+  //   const changedBlog = {
+  //     user: blog.user,
+  //     likes: blog.likes + 1,
+  //     author: blog.author,
+  //     title: blog.title,
+  //     url: blog.url
+  //   }
 
-    try {
-      const updatedBlog = await blogService.update(id, changedBlog)
-      setBlogs(blogs.map( blog => blog.id !== id ? blog : updatedBlog))
-    } catch (error) {
-      createNotification(error.message, 2)
-    }
-  }
+  //   try {
+  //     const updatedBlog = await blogService.update(id, changedBlog)
+  //     setBlogs(blogs.map( blog => blog.id !== id ? blog : updatedBlog))
+  //     dispatch(createNotification('Blog successfully updated', 'success'))
+  //   } catch (error) {
+  //     dispatch(createNotification(error.message, 'error'))
+  //   }
+  // }
 
-  const deleteBlog = async (blogToDelete) => {
-    const remove = window.confirm(`Remove blog ${blogToDelete.title} by ${blogToDelete.author}`)
-    if(remove){
-      try {
-        await blogService.remove(blogToDelete.id)
-        setBlogs(blogs.filter(blog => blog.id !== blogToDelete.id))
-        createNotification('Blog deleted successfully', 1)
-      } catch (error) {
-        createNotification(error.message, 2)
-      }
-    }
-  }
+  // const deleteBlog = async (blogToDelete) => {
+  //   const remove = window.confirm(`Remove blog ${blogToDelete.title} by ${blogToDelete.author}`)
+  //   if(remove){
+  //     try {
+  //       await blogService.remove(blogToDelete.id)
+  //       setBlogs(blogs.filter(blog => blog.id !== blogToDelete.id))
+  //       dispatch(createNotification('Blog deleted successfully', 'success'))
+  //     } catch (error) {
+  //       dispatch(createNotification(error.message, 'error'))
+  //     }
+  //   }
+  // }
 
 
   return (
     <div>
       <h2>blogs</h2>
-      <Notification message={notificationMessage} notificationType={notificationType} />
+      <Notification />
 
       {user === null ?
         <Togglable buttonLabel='log in' ref={loginFormRef}>
@@ -121,7 +108,7 @@ const App = () => {
         <div>
           {user.name} logged in <button onClick={handleLogout}>logout</button>
           <Togglable buttonLabel='create new blog' ref={blogFormRef}>
-            <BlogForm createBlog={createBlog}/>
+            <BlogForm />
           </Togglable>
         </div>
       }
@@ -131,8 +118,7 @@ const App = () => {
           <Blog
             key={blog.id}
             blog={blog}
-            updateBlog={updateBlog}
-            deleteBlog={deleteBlog}
+            // z
             showRemoveButton={!user ?  false: user.name === blog.user.name ?  true: false}
           />
         )}
