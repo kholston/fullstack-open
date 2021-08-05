@@ -62,39 +62,6 @@ const App = () => {
 
 
 
-  // const updateBlog = async (id) => {
-  //   const blog = blogs.find(blog => blog.id === id)
-  //   const changedBlog = {
-  //     user: blog.user,
-  //     likes: blog.likes + 1,
-  //     author: blog.author,
-  //     title: blog.title,
-  //     url: blog.url
-  //   }
-
-  //   try {
-  //     const updatedBlog = await blogService.update(id, changedBlog)
-  //     setBlogs(blogs.map( blog => blog.id !== id ? blog : updatedBlog))
-  //     dispatch(createNotification('Blog successfully updated', 'success'))
-  //   } catch (error) {
-  //     dispatch(createNotification(error.message, 'error'))
-  //   }
-  // }
-
-  // const deleteBlog = async (blogToDelete) => {
-  //   const remove = window.confirm(`Remove blog ${blogToDelete.title} by ${blogToDelete.author}`)
-  //   if(remove){
-  //     try {
-  //       await blogService.remove(blogToDelete.id)
-  //       setBlogs(blogs.filter(blog => blog.id !== blogToDelete.id))
-  //       dispatch(createNotification('Blog deleted successfully', 'success'))
-  //     } catch (error) {
-  //       dispatch(createNotification(error.message, 'error'))
-  //     }
-  //   }
-  // }
-
-
   return (
     <div>
       <h2>blogs</h2>
@@ -118,7 +85,6 @@ const App = () => {
           <Blog
             key={blog.id}
             blog={blog}
-            // z
             showRemoveButton={!user ?  false: user.name === blog.user.name ?  true: false}
           />
         )}
