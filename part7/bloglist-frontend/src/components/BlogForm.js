@@ -2,9 +2,9 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { useDispatch } from 'react-redux'
 import { createBlog } from '../reducers/blogReducer'
-import { useField } from '../hooks/useField'
+import { useField } from '../hooks'
 
-const BlogForm = () => {
+const BlogForm = ({ toggleForm }) => {
   const dispatch = useDispatch()
 
   const titleField = useField('text')
@@ -19,7 +19,7 @@ const BlogForm = () => {
 
   const addBlog = (event) => {
     event.preventDefault()
-
+    toggleForm()
     const newBlog = {
       title: titleField.value,
       author: authorField.value,

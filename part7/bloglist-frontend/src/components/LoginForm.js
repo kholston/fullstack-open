@@ -1,24 +1,24 @@
-import React, { useState } from 'react'
-import PropTypes from 'prop-types'
+import React from 'react'
+import { useDispatch } from 'react-redux'
+import { login } from '../reducers/userReducer'
+import { useField } from '../hooks'
 
-const LoginForm = ({ handleLogin }) => {
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
+const LoginForm = ({ toggleForm  }) => {
+  const dispatch = useDispatch()
+  const username = useField('text')
+  const password = useField('password')
 
-
-  const handleUsernameChange = (event) => {
-    setUsername(event.target.value)
-  }
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value)
-  }
 
   const handleSubmit = (event) => {
     event.preventDefault()
-
-    handleLogin({ username, password })
-    setUsername('')
-    setPassword('')
+    toggleForm()
+    const credentials = {
+      username: username.value,
+      password: password.value
+    }
+    dispatch(login(credentials))
+    username.reset()
+    password.reset()
   }
 
   return (
@@ -27,23 +27,11 @@ const LoginForm = ({ handleLogin }) => {
       <form onSubmit={handleSubmit} id='login-form'>
         <div>
           username
-          <input
-            type="text"
-            value={username}
-            name='Username'
-            onChange={handleUsernameChange}
-            id='usernameInput'
-          />
+          <input type={username.type} value={username.value} onChange={username.onChange}/>
         </div>
         <div>
           password
-          <input
-            type="password"
-            name="Password"
-            value={password}
-            onChange={handlePasswordChange}
-            id='passwordInput'
-          />
+          <input type={password.type} value={password.value} onChange={password.onChange}/>
         </div>
         <button id='submitLogin' type='submit'>login</button>
       </form>
@@ -51,8 +39,6 @@ const LoginForm = ({ handleLogin }) => {
   )
 }
 
-LoginForm.propTypes = {
-  handleLogin: PropTypes.func.isRequired
-}
+
 
 export default LoginForm
