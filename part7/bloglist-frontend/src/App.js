@@ -1,23 +1,48 @@
 import React, { useEffect, useRef } from 'react'
+import { Switch, Route } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import LoginForm from './components/LoginForm'
-import Blog from './components/Blog'
+import BlogList from './components/BlogList'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import Notification from './components/Notification'
 import { initializeBlogs } from './reducers/blogReducer'
 import { setUser, logout } from './reducers/userReducer'
 import { useSelector } from 'react-redux'
+import UserList from './components/UserList'
+
+const Home = ({ user }) => {
+  const blogFormRef = useRef()
+
+  const toggleBlogForm = () => {blogFormRef.current.toggleVisibility()}
+
+
+  return(
+    <div>
+      {user === null ?
+        null
+        :
+        <div>
+          <Togglable buttonLabel='create new blog' ref={blogFormRef}>
+            <BlogForm toggleForm={toggleBlogForm}/>
+          </Togglable>
+        </div>
+      }
+      <BlogList/>
+    </div>
+  )
+
+
+}
+
 
 const App = () => {
   const dispatch = useDispatch()
 
-  const blogs = useSelector(state => state.blogs)
   const user = useSelector(state => state.user)
-
-
-  const blogFormRef = useRef()
   const loginFormRef = useRef()
+  const toggleLoginForm = () => {loginFormRef.current.toggleVisibility()}
+
 
 
   useEffect(() => {
@@ -26,14 +51,10 @@ const App = () => {
       const user = JSON.parse(loggedBloglistUser)
       dispatch(setUser(user))
     }
-  },[])
-
-  useEffect(() => {
     dispatch(initializeBlogs())
   },[dispatch])
 
-  const toggleBlogForm = () => {blogFormRef.current.toggleVisibility()}
-  const toggleLoginForm = () => {loginFormRef.current.toggleVisibility()}
+
 
   const handleLogout = () => {
     dispatch(logout())
@@ -44,28 +65,31 @@ const App = () => {
       <h2>blogs</h2>
       <Notification />
 
+
       {user === null ?
         <Togglable buttonLabel='log in' ref={loginFormRef}>
           <LoginForm toggleForm={toggleLoginForm}/>
         </Togglable>
         :
         <div>
-          {user.name} logged in <button onClick={handleLogout}>logout</button>
-          <Togglable buttonLabel='create new blog' ref={blogFormRef}>
-            <BlogForm toggleForm={toggleBlogForm}/>
-          </Togglable>
+          <div>
+            {user.name} logged in
+          </div>
+          <div>
+            <button onClick={handleLogout}>logout</button>
+          </div>
         </div>
+
       }
 
-      <div id='bloglist'>
-        {blogs.sort((a,b) => b.likes - a.likes).map(blog =>
-          <Blog
-            key={blog.id}
-            blog={blog}
-            showRemoveButton={!user ?  false: user.name === blog.user.name ?  true: false}
-          />
-        )}
-      </div>
+
+      <Switch>
+        <Route path={'/users'}><UserList/></Route>
+        {/* <Route path={'/users/:id'}><User/></Route> */}
+        <Route path={'/login'}><LoginForm/></Route>
+        <Route path={'/blogs/new'}><BlogForm/></Route>
+        <Route path={'/'}><Home user={user}/></Route>
+      </Switch>
     </div>
   )
 }

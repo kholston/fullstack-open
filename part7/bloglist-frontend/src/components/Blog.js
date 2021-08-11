@@ -59,7 +59,6 @@ const Blog = ({ blog, showRemoveButton }) => {
 
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,
-  updateBlog: PropTypes.func.isRequired,
   showRemoveButton: PropTypes.bool.isRequired
 }
 

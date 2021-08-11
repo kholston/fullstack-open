@@ -25,7 +25,6 @@ const BlogForm = ({ toggleForm }) => {
       author: authorField.value,
       url: urlField.value
     }
-    console.log('blog being sent:', newBlog)
     dispatch(createBlog(newBlog))
     clearForm()
   }
