@@ -1,25 +1,25 @@
 import React, { useEffect, useRef } from 'react'
 import { Switch, Route } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import LoginForm from './components/LoginForm'
 import BlogList from './components/BlogList'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import Notification from './components/Notification'
 import { initializeBlogs } from './reducers/blogReducer'
-import { setUser, logout } from './reducers/userReducer'
-import { useSelector } from 'react-redux'
+import { setUser, logout } from './reducers/loginReducer'
+import { initializeUsers } from './reducers/userReducer'
 import UserList from './components/UserList'
+import User from './components/User'
 
-const Home = ({ user }) => {
+const Home = ({ login }) => {
   const blogFormRef = useRef()
 
   const toggleBlogForm = () => {blogFormRef.current.toggleVisibility()}
 
-
   return(
     <div>
-      {user === null ?
+      {login === null ?
         null
         :
         <div>
@@ -39,10 +39,9 @@ const Home = ({ user }) => {
 const App = () => {
   const dispatch = useDispatch()
 
-  const user = useSelector(state => state.user)
+  const login = useSelector(state => state.login)
   const loginFormRef = useRef()
   const toggleLoginForm = () => {loginFormRef.current.toggleVisibility()}
-
 
 
   useEffect(() => {
@@ -52,28 +51,28 @@ const App = () => {
       dispatch(setUser(user))
     }
     dispatch(initializeBlogs())
+    dispatch(initializeUsers())
   },[dispatch])
-
-
 
   const handleLogout = () => {
     dispatch(logout())
   }
+
+
 
   return (
     <div>
       <h2>blogs</h2>
       <Notification />
 
-
-      {user === null ?
+      {login === null ?
         <Togglable buttonLabel='log in' ref={loginFormRef}>
           <LoginForm toggleForm={toggleLoginForm}/>
         </Togglable>
         :
         <div>
           <div>
-            {user.name} logged in
+            {login.name} logged in
           </div>
           <div>
             <button onClick={handleLogout}>logout</button>
@@ -82,13 +81,12 @@ const App = () => {
 
       }
 
-
       <Switch>
+        <Route path={'/users/:id'}><User/></Route>
         <Route path={'/users'}><UserList/></Route>
-        {/* <Route path={'/users/:id'}><User/></Route> */}
         <Route path={'/login'}><LoginForm/></Route>
         <Route path={'/blogs/new'}><BlogForm/></Route>
-        <Route path={'/'}><Home user={user}/></Route>
+        <Route path={'/'}><Home login={login}/></Route>
       </Switch>
     </div>
   )

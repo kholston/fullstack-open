@@ -1,16 +1,11 @@
-import React ,{ useState, useEffect } from 'react'
-import userService from '../services/users'
+import React  from 'react'
+import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
+
+
 
 const UserList = () => {
-  const [users, setUsers] = useState(null)
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      const userList = await userService.getAll()
-      setUsers(userList)
-    }
-    fetchUsers()
-  },[])
+  const users = useSelector(state => state.users)
 
   return(
     <div>
@@ -23,7 +18,7 @@ const UserList = () => {
           </tr>
           {users && users.map(user => (
             <tr key={user.id}>
-              <td>{user.name}</td>
+              <td><Link to={`/users/${user.id}`}>{user.name}</Link></td>
               <td>{user.blogs.length}</td>
             </tr>
           ))}

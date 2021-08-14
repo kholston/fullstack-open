@@ -1,56 +1,34 @@
-import loginService from '../services/login'
-import blogService from '../services/blogs'
-import { createNotification } from './notificationReducer'
+import userService from '../services/users'
 
-export const login = (credentials) => {
+export const initializeUsers= () => {
   return async dispatch => {
-    try {
-      const user = await loginService.login(credentials)
-      window.localStorage.setItem('loggedBloglistUser', JSON.stringify(user))
-      blogService.setToken(user.token)
-      dispatch({
-        type: 'USER_LOGIN',
-        data: user
-      })
-      dispatch(createNotification(`Welcome ${user.username}`, 'success'))
-    } catch (error) {
-      dispatch(createNotification('wrong username or password', 'error'))
-    }
+    const users = await userService.getAll()
+    dispatch({
+      type:'INIT_USERS',
+      data: users
+    })
   }
 }
 
-export const setUser = (userData) => {
+export const getUser = (id) => {
   return async dispatch => {
     dispatch({
-      type: 'STORE_USER',
-      data: userData
+      type: 'GET_USER',
+      data: id
     })
-    blogService.setToken(userData.token)
   }
 }
-
-export const  logout = () => {
-  return async dispatch => {
-    window.localStorage.removeItem('loggedBloglistUser')
-    dispatch({
-      type: 'CLEAR_USER',
-      data: null
-    })
-    blogService.setToken(null)
-    dispatch(createNotification('successfully logged out', 'success'))
-  }
-}
-
 
 const userReducer = (state = null, action) => {
   switch(action.type){
-  case 'USER_LOGIN':
-  case 'STORE_USER':
-  case 'CLEAR_USER':
+  case 'INIT_USERS':
     return action.data
+  case 'GET_USER':
+    return state ? state.find(u => u.id === action.data) : null
   default:
     return state
   }
+
 }
 
 export default userReducer

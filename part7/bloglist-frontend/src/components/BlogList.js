@@ -7,7 +7,7 @@ const BlogList = () => {
 
   return(
     <div>
-      {
+      { blogs &&
         blogs
           .sort((a,b) => b.likes - a.likes)
           .map(blog =>
