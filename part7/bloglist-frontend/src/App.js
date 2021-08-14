@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import LoginForm from './components/LoginForm'
 import BlogList from './components/BlogList'
 import BlogForm from './components/BlogForm'
+import Blog from './components/Blog'
 import Togglable from './components/Togglable'
 import Notification from './components/Notification'
 import { initializeBlogs } from './reducers/blogReducer'
@@ -85,6 +86,7 @@ const App = () => {
         <Route path={'/users/:id'}><User/></Route>
         <Route path={'/users'}><UserList/></Route>
         <Route path={'/login'}><LoginForm/></Route>
+        <Route path={'/blogs/:id'}><Blog/></Route>
         <Route path={'/blogs/new'}><BlogForm/></Route>
         <Route path={'/'}><Home login={login}/></Route>
       </Switch>
