@@ -8,10 +8,11 @@ import Blog from './components/Blog'
 import Togglable from './components/Togglable'
 import Notification from './components/Notification'
 import { initializeBlogs } from './reducers/blogReducer'
-import { setUser, logout } from './reducers/loginReducer'
+import { setUser } from './reducers/loginReducer'
 import { initializeUsers } from './reducers/userReducer'
 import UserList from './components/UserList'
 import User from './components/User'
+import Navigation from './components/Navigation'
 
 const Home = ({ login }) => {
   const blogFormRef = useRef()
@@ -41,8 +42,6 @@ const App = () => {
   const dispatch = useDispatch()
 
   const login = useSelector(state => state.login)
-  const loginFormRef = useRef()
-  const toggleLoginForm = () => {loginFormRef.current.toggleVisibility()}
 
 
   useEffect(() => {
@@ -55,32 +54,13 @@ const App = () => {
     dispatch(initializeUsers())
   },[dispatch])
 
-  const handleLogout = () => {
-    dispatch(logout())
-  }
-
 
 
   return (
     <div>
-      <h2>blogs</h2>
+      <Navigation/>
+      <h2>blog app</h2>
       <Notification />
-
-      {login === null ?
-        <Togglable buttonLabel='log in' ref={loginFormRef}>
-          <LoginForm toggleForm={toggleLoginForm}/>
-        </Togglable>
-        :
-        <div>
-          <div>
-            {login.name} logged in
-          </div>
-          <div>
-            <button onClick={handleLogout}>logout</button>
-          </div>
-        </div>
-
-      }
 
       <Switch>
         <Route path={'/users/:id'}><User/></Route>

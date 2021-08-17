@@ -2,16 +2,17 @@ import React from 'react'
 import { useDispatch } from 'react-redux'
 import { login } from '../reducers/loginReducer'
 import { useField } from '../hooks'
+import { useHistory } from 'react-router-dom'
 
-const LoginForm = ({ toggleForm  }) => {
+const LoginForm = () => {
   const dispatch = useDispatch()
+  const history = useHistory()
   const username = useField('text')
   const password = useField('password')
 
 
   const handleSubmit = (event) => {
     event.preventDefault()
-    toggleForm()
     const credentials = {
       username: username.value,
       password: password.value
@@ -19,6 +20,7 @@ const LoginForm = ({ toggleForm  }) => {
     dispatch(login(credentials))
     username.reset()
     password.reset()
+    history.push('/')
   }
 
   return (
