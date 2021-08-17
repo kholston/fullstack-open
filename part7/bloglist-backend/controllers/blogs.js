@@ -27,6 +27,7 @@ blogRouter.post('/', async (request, response) => {
     author: body.author,
     user: user.id,
     url: body.url,
+    comments: []
   })
 
   const createdBlog = await blog.save()
@@ -37,6 +38,7 @@ blogRouter.post('/', async (request, response) => {
 
   response.json(savedBlog)
 })
+
 
 blogRouter.delete('/:id', async (request, response) => {
   const blogToDelete = await Blog.findById(request.params.id)
@@ -65,7 +67,23 @@ blogRouter.put('/:id', async (request, response) => {
 
   const update = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
   const updatedBlog = await Blog.findById(update._id).populate('user', { username: 1, name: 1 })
+  response.json(updatedBlog)
+})
 
+blogRouter.post('/:id/comments', async (request, response) => {
+  const newComment = request.body.comment
+  const blogToChange = request.body.blog
+
+  const blog = {
+    title: blogToChange.title,
+    author: blogToChange.author,
+    url: blogToChange.url,
+    likes: blogToChange.likes,
+    comments: blogToChange.comments.concat(newComment)
+  }
+
+  const update = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
+  const updatedBlog = await Blog.findById(update._id).populate('user', { username: 1, name: 1 })
   response.json(updatedBlog)
 })
 
