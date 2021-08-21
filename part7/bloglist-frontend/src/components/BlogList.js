@@ -1,9 +1,16 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
+import Togglable from './Togglable'
+import BlogForm from './BlogForm'
 
 const BlogList = () => {
+  const login = useSelector(state => state.login)
+  const blogFormRef = useRef()
   const blogs =  useSelector(state => state.blogs)
+
+  const toggleBlogForm = () => {blogFormRef.current.toggleVisibility()}
+
 
   const linkStyle = {
     paddingTop: 10,
@@ -15,6 +22,17 @@ const BlogList = () => {
 
   return(
     <div>
+      <div>
+        {login === null ?
+          null
+          :
+          <div>
+            <Togglable buttonLabel='create new blog' ref={blogFormRef}>
+              <BlogForm toggleForm={toggleBlogForm}/>
+            </Togglable>
+          </div>
+        }
+      </div>
       { blogs &&
         blogs
           .sort((a,b) => b.likes - a.likes)
