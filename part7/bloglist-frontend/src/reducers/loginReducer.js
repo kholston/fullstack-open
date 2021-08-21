@@ -15,7 +15,7 @@ export const login = (credentials) => {
       })
       dispatch(createNotification(`Welcome ${user.username}`, 'success'))
     } catch (error) {
-      dispatch(createNotification('wrong username or password', 'error'))
+      dispatch(createNotification('wrong username or password', 'danger'))
     }
   }
 }

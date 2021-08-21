@@ -22,7 +22,7 @@ export const createBlog = (blogObject) => {
       const message = `a new blog '${createdBlog.title}' by ${createdBlog.author} was added.`
       dispatch(createNotification(message, 'success'))
     } catch (error) {
-      dispatch(createNotification('blog creation failed, please try again', 'error'))
+      dispatch(createNotification('blog creation failed, please try again', 'danger'))
     }
   }
 }
@@ -37,7 +37,7 @@ export const removeBlog = (blogId) => {
       })
       dispatch(createNotification('blog deleted successfully', 'success'))
     } catch (error) {
-      dispatch(createNotification('blog deletion failed', 'error'))
+      dispatch(createNotification('blog deletion failed', 'danger'))
     }
   }
 }
@@ -52,7 +52,7 @@ export const updateBlog = (id, changedBlog) => {
       })
       dispatch(createNotification(`Blog ${updatedBlog.title} successfully updated`, 'success'))
     } catch (error) {
-      dispatch(createNotification('failed to update blog', 'error'))
+      dispatch(createNotification('failed to update blog', 'danger'))
     }
   }
 }
@@ -67,7 +67,7 @@ export const likeBlog = (id, changedBlog) => {
       })
       dispatch(createNotification(`Liked ${updatedBlog.title}`, 'success'))
     } catch (error) {
-      dispatch(createNotification('failed to like blog', 'error'))
+      dispatch(createNotification('failed to like blog', 'danger'))
     }
   }
 }
@@ -85,7 +85,7 @@ export const addComment = (blog, comment) => {
         data : updatedBlog
       })
     } catch (error) {
-      dispatch(createNotification('failed to add comment', 'error'))
+      dispatch(createNotification('failed to add comment', 'danger'))
     }
   }
 }
