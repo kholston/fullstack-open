@@ -72,6 +72,24 @@ export const likeBlog = (id, changedBlog) => {
   }
 }
 
+export const addComment = (blog, comment) => {
+  const changedBlog = {
+    ...blog,
+    comments: blog.comments.concat(comment)
+  }
+  return async dispatch => {
+    try {
+      const updatedBlog = await blogService.addComment(blog.id, changedBlog)
+      dispatch({
+        type: 'ADD_COMMENT',
+        data : updatedBlog
+      })
+    } catch (error) {
+      dispatch(createNotification('failed to add comment', 'error'))
+    }
+  }
+}
+
 const blogReducer = (state = [], action) => {
   switch(action.type){
   case 'INIT_BLOGS':
@@ -81,6 +99,7 @@ const blogReducer = (state = [], action) => {
   case 'REMOVE_BLOG':
     return state.filter(blog => blog.id !== action.data)
   case 'UPDATE_BLOG':
+  case 'ADD_COMMENT':
     return state.map(blog => blog.id !== action.data.id ? blog : action.data )
   default:
     return state
