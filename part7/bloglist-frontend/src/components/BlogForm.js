@@ -33,24 +33,6 @@ const BlogForm = ({ toggleForm }) => {
 
 
   return(
-    // <div>
-    //   <h2>create new</h2>
-    //   <form onSubmit={addBlog} id="blogForm">
-    //     <div>
-    //       title:
-    //       <input type={titleField.type} value={titleField.value} onChange={titleField.onChange} />
-    //     </div>
-    //     <div>
-    //       author:
-    //       <input type={authorField.type} value={authorField.value} onChange={authorField.onChange} />
-    //     </div>
-    //     <div>
-    //       url:
-    //       <input type={urlField.type} value={urlField.value} onChange={urlField.onChange} />
-    //     </div>
-    //     <button id="blogSubmit" type='submit'>create</button>
-    //   </form>
-    // </div>
     <div className="w-50">
       <h2>create new blog</h2>
       <Form onSubmit={addBlog}>
