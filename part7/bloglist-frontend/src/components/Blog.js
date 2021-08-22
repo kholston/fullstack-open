@@ -46,23 +46,6 @@ const Blog = () => {
   return(
     blog &&
     <div>
-      {/* <h2>{blog.title} {blog.author}</h2>
-      <a href={blog.url}>{blog.url}</a>
-      <div>
-        {blog.likes} likes
-        <button onClick={() => addLike(blog)}>like</button>
-      </div>
-      added by {blog.user.name}
-      <h3>comments</h3>
-      <form onSubmit={submitComment}>
-        <input type="text" value={comment} onChange={handleCommentChange}/>
-        <button type='submit'>add comment</button>
-      </form>
-      <ul>
-        {blog.comments.map(comment => (
-          <li key={comment}>{comment}</li>
-        ))}
-      </ul> */}
       <Card className='col-sm-8 offset-sm-2 offset-4 mt-3'>
         <Card.Body>
           <Card.Title>{blog.title}</Card.Title>
