@@ -121,7 +121,7 @@ const typeDefs = gql`
     ) : Book
     editAuthor(
       name: String!
-      setBornTo: Int!
+      setBornTo: String!
     ): Author
   }
 `

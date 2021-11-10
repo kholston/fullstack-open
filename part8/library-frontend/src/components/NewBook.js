@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { CREATE_BOOK } from '../queries'
+import Notification from './Notification'
 
 const NewBook = (props) => {
   const [title, setTitle] = useState('')
@@ -8,7 +9,7 @@ const NewBook = (props) => {
   const [published, setPublished] = useState('')
   const [genre, setGenre] = useState('')
   const [genres, setGenres] = useState([])
-  const [errors, setErrors] = useState(null)
+  const [messages, setMessages] = useState(null)
 
   const [createBook] = useMutation(CREATE_BOOK, {
     onError: (error) => {
@@ -25,6 +26,8 @@ const NewBook = (props) => {
     
     await createBook({ variables:{title, author, published, genres } })
 
+    notify([{message: 'book created sucessfully', color: 'green'}])
+
     setTitle('')
     setPublished('')
     setAuthor('')
@@ -33,9 +36,9 @@ const NewBook = (props) => {
   }
 
   const notify = (messages) => {
-    setErrors(messages)
+    setMessages(messages)
     setTimeout(() => {
-      setErrors(null)
+      setMessages(null)
     }, 10000)
   }
 
@@ -46,7 +49,7 @@ const NewBook = (props) => {
 
   return (
     <div>
-      <Errors errors={errors}/>
+      <Notification messages={messages}/>
       <form onSubmit={submit}>
         <div>
           title
@@ -82,20 +85,6 @@ const NewBook = (props) => {
         </div>
         <button type='submit'>create book</button>
       </form>
-    </div>
-  )
-}
-
-const Errors = ({errors}) => {
-  if(!errors){
-    return null
-  }
-
-  return (
-    <div>
-      <ul>
-        {errors.map(e => <li style={{color:'red'}}>{e.message}</li>)} 
-      </ul>
     </div>
   )
 }

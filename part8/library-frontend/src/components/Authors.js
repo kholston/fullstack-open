@@ -1,8 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useQuery } from '@apollo/client'
 import { ALL_AUTHORS } from '../queries'
+import BirthYearForm from './BirthYearForm'
+import Notification from './Notification'
 
 const Authors = (props) => {
+  const [messages, setMessages] = useState(null)
   let authors
   const result = useQuery(ALL_AUTHORS, {
     pollInterval: 2000
@@ -14,8 +17,16 @@ const Authors = (props) => {
   
   authors = (result.loading ?  [] : result.data.allAuthors)
   
+  const notify = (messages) => {
+    setMessages(messages)
+    setTimeout(()=>{
+      setMessages(null)
+    }, 10000)
+  }
+
   return (
     <div>
+      <Notification messages={messages}/>
       <h2>authors</h2>
       <table>
         <tbody>
@@ -37,7 +48,7 @@ const Authors = (props) => {
           )}
         </tbody>
       </table>
-
+      <BirthYearForm notify={notify}/>
     </div>
   )
 }
