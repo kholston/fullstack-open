@@ -48,7 +48,7 @@ const Authors = (props) => {
           )}
         </tbody>
       </table>
-      <BirthYearForm notify={notify}/>
+      <BirthYearForm notify={notify} authors={authors}/>
     </div>
   )
 }
