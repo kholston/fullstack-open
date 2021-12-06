@@ -4,7 +4,7 @@
   "description": "graphql server",
   "private": "true",
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "nodemon --inspect index.js"
   },
   "author": "Ken Holston",
   "license": "MIT",
@@ -12,7 +12,7 @@
     "apollo-server": "^3.1.2",
     "dotenv": "^10.0.0",
     "graphql": "^15.5.1",
-    "json-web-token": "^3.2.0",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.0.12",
     "mongoose-unique-validator": "^3.0.0",
     "uuid": "^8.3.2"

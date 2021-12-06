@@ -1,7 +1,7 @@
 require('dotenv').config()
 const { ApolloServer, UserInputError, gql, AuthenticationError} = require('apollo-server')
 const mongoose = require('mongoose')
-const jwt = require('json-web-token')
+const jwt = require('jsonwebtoken')
 const Person = require('./models/Person')
 
 
@@ -76,7 +76,7 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
-    personCount: () => Person.collection.count,
+    personCount: () => Person.collection.countDocuments(),
     allPersons: (root, args) => {
       if(!args.phone){
         return Person.find({})
@@ -104,7 +104,7 @@ const resolvers = {
       const currentUser = context.currentUser
 
       if(!currentUser) {
-        throw new AuthenticationError('not authorized')
+        throw new AuthenticationError('not authenticated')
       }
 
       try {
@@ -142,7 +142,7 @@ const resolvers = {
         })
     },
     login: async (root, args) => {
-      const user = User.findOne({username: args.username})
+      const user = await User.findOne({username: args.username})
 
       if(!user || args.password !== 'secret') {
         throw new UserInputError('wrong credentials')
@@ -153,15 +153,14 @@ const resolvers = {
         id: user._id
       }
 
-      return {value: jwt.sign(userForToken, process.env.JWT_SECRET)}
-    }
-   },
-   addAsFriend: async ( root, args, {currentUser} ) => {
+      return { value: jwt.sign(userForToken, process.env.JWT_SECRET)}
+    },
+    addAsFriend: async (root, args, { currentUser } ) => {
       const nonFriendAlready = (person) => 
       !currentUser.friends.map(f => f._id).includes(person._id)
 
       if(!currentUser) {
-        throw new AuthenticationError('not authorized')
+        throw new AuthenticationError('not authenticated')
       }
 
       const person = await Person.findOne({name: args.name})
@@ -173,6 +172,7 @@ const resolvers = {
 
       return currentUser
    }
+  },
 }
 
 const server = new ApolloServer({
@@ -184,7 +184,7 @@ const server = new ApolloServer({
       const decodedToken = jwt.verify(
         auth.substring(7), process.env.JWT_SECRET
       )
-      const currentUser = await User.findById(decodedToken.id).populates('friends')
+      const currentUser = await User.findById(decodedToken.id).populate('friends')
       return { currentUser }
     }
   }
