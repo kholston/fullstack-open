@@ -1,8 +1,9 @@
 require('dotenv').config()
-const { ApolloServer, UserInputError, gql, AuthenticationError} = require('apollo-server')
+const { ApolloServer, UserInputError, gql, AuthenticationError, context} = require('apollo-server')
 const mongoose = require('mongoose')
 const jwt = require('jsonwebtoken')
 const Person = require('./models/Person')
+const User = require('./models/User')
 
 
 console.log('connecting to database')
@@ -55,7 +56,7 @@ const typeDefs = gql`
       name: String!
       phone: String
       street: String!
-      city: String
+      city: String!
     ): Person
     editNumber(
       name: String!
@@ -77,12 +78,12 @@ const typeDefs = gql`
 const resolvers = {
   Query: {
     personCount: () => Person.collection.countDocuments(),
-    allPersons: (root, args) => {
+    allPersons: async (root, args) => {
       if(!args.phone){
-        return Person.find({})
+        return await Person.find({})
       }
       
-      return Person.find({phone: {$exists: args.phone === 'YES'}})
+      return await Person.find({phone: {$exists: args.phone === 'YES'}})
     },
     findPerson: (root, args) => 
       Person.findOne({name: args.name}),
@@ -99,7 +100,7 @@ const resolvers = {
     }
   },
   Mutation: {
-    addPerson: async (root, args) => {
+    addPerson: async (root, args, context) => {
       const person = new Person({...args})
       const currentUser = context.currentUser
 
