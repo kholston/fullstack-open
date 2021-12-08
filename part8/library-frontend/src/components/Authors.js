@@ -48,7 +48,7 @@ const Authors = (props) => {
           )}
         </tbody>
       </table>
-      <BirthYearForm notify={notify} authors={authors}/>
+      {props.token ? <BirthYearForm notify={notify} authors={authors}/> : null}
     </div>
   )
 }

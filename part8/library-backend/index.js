@@ -56,7 +56,7 @@ const typeDefs = gql`
     addBook(
       title: String!
       author: String!
-      published: Int!
+      published: String!
       genres:[String!]!
     ) : Book
     addAuthor(
@@ -65,7 +65,7 @@ const typeDefs = gql`
     ): Author
     editAuthor(
       name: String!
-      setBornTo: Int!
+      setBornTo: String!
     ): Author
     createUser(
       username: String!
@@ -119,7 +119,6 @@ const resolvers = {
   Mutation: {
     addBook: async (root, args, context) => {
       const currentUser = context.currentUser
-
       if(!currentUser){
         throw new AuthenticationError("not authenticated")
       }
