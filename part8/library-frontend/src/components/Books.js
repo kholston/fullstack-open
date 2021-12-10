@@ -1,26 +1,15 @@
 import React, { useState, useEffect } from 'react'
-import { useQuery } from '@apollo/client'
-import { ALL_BOOKS } from '../queries'
 
-const Books = (props) => {
-  const [books, setBooks] = useState([])
+
+const Books = ({show, books}) => {
   const [filter, setFilter] = useState('all genres')
   const [genres, setGenres] = useState([])
   
-  const result = useQuery(ALL_BOOKS, {
-    pollInterval: 2000
-  })
 
   const buttonSpacing = {
     margin: "5px"
   }
 
-
-  useEffect(() => {
-    if(result.data){
-      setBooks(result.data.allBooks)
-    }
-  },[result.data]) //eslint-disable-line 
 
   useEffect(() => {
     setGenres(
@@ -40,7 +29,7 @@ const Books = (props) => {
     setFilter(event.target.innerText)
   }
 
-  if (!props.show) {
+  if (!show) {
     return null
   }
 
@@ -61,11 +50,11 @@ const Books = (props) => {
               published
             </th>
           </tr>
-          {books.filter(genreFilter).map(a =>
-            <tr key={a.id}>
-              <td>{a.title}</td>
-              <td>{a.author.name}</td>
-              <td>{a.published}</td>
+          {books.filter(genreFilter).map(b =>
+            <tr key={b.id}>
+              <td>{b.title}</td>
+              <td>{b.author.name}</td>
+              <td>{b.published}</td>
             </tr>
           )}
         </tbody>
