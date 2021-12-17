@@ -1,5 +1,6 @@
 require('dotenv').config()
 const { ApolloServer, UserInputError, gql, AuthenticationError} = require('apollo-server-express')
+const { PubSub } = require('graphql-subscriptions')
 const cors = require('cors')
 const express = require('express')
 const { execute, subscribe } = require('graphql')
@@ -79,7 +80,12 @@ const typeDefs = gql`
       name: String!
     ): User
   }
+  type Subscription {
+    personAdded: Person!
+  }
 `
+
+const pubsub = new PubSub()
 
 const resolvers = {
   Query: {
@@ -125,6 +131,9 @@ const resolvers = {
           invalidArgs: args,
         })
       }
+
+      pubsub.publish('PERSON_ADDED', {personAdded: person})
+
       return person
     },
     editNumber: async (root,args) => {
@@ -182,13 +191,18 @@ const resolvers = {
       return currentUser
    }
   },
+  Subscription : {
+    personAdded: {
+      subscribe: () => pubsub.asyncIterator(['PERSON_ADDED'])
+    }
+  }
 }
 
 const app = express()
 const httpServer = createServer(app)
 
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: ['http://localhost:3000', 'https://studio.apollographql.com'],
   credentials: true
 }))
 
@@ -199,7 +213,7 @@ const subscriptionServer = SubscriptionServer.create({
   subscribe
 }, {
   server: httpServer,
-  path: '/'
+  path: '/graphql'
 })
 
 const server = new ApolloServer({
