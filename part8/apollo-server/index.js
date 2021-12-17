@@ -85,8 +85,10 @@ const resolvers = {
       
       return await Person.find({phone: {$exists: args.phone === 'YES'}})
     },
-    findPerson: (root, args) => 
-      Person.findOne({name: args.name}),
+    findPerson: (root, args) => {
+      return Person.findOne({name: args.name}).exec()
+    }
+      ,
     me: (root, args, context) => {
       return context.currentUser
     }
