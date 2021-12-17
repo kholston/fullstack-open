@@ -1,5 +1,8 @@
 require('dotenv').config()
-const { ApolloServer, UserInputError, gql, AuthenticationError, context} = require('apollo-server')
+const { ApolloServer, UserInputError, gql, AuthenticationError, context} = require('apollo-server-express')
+const { ApolloServerPluginDrainHttpServer } = require('apollo-server-core')
+const express = require('express')
+const http = require('http')
 const mongoose = require('mongoose')
 const jwt = require('jsonwebtoken')
 const Person = require('./models/Person')
@@ -178,6 +181,9 @@ const resolvers = {
   },
 }
 
+const app = express()
+const httpServer = http.createServer(app)
+
 const server = new ApolloServer({
   typeDefs,
   resolvers,
@@ -190,9 +196,16 @@ const server = new ApolloServer({
       const currentUser = await User.findById(decodedToken.id).populate('friends')
       return { currentUser }
     }
-  }
+  },
+  plugins: [ApolloServerPluginDrainHttpServer({httpServer})],
 })
 
-server.listen().then(({url}) => {
-  console.log(`Server ready at ${url}`)
-})
+server.start().then(() => [
+  server.applyMiddleware({
+    app,
+    path: '/'
+  })
+])
+
+httpServer.listen({port: 4000})
+console.log(`Server ready at http://localhost:4000${server.graphqlPath}`)
