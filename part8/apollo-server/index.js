@@ -1,8 +1,11 @@
 require('dotenv').config()
-const { ApolloServer, UserInputError, gql, AuthenticationError, context} = require('apollo-server-express')
-const { ApolloServerPluginDrainHttpServer } = require('apollo-server-core')
+const { ApolloServer, UserInputError, gql, AuthenticationError} = require('apollo-server-express')
+const cors = require('cors')
 const express = require('express')
-const http = require('http')
+const { execute, subscribe } = require('graphql')
+const { SubscriptionServer } = require('subscriptions-transport-ws')
+const { makeExecutableSchema } = require('@graphql-tools/schema')
+const { createServer } = require('http')
 const mongoose = require('mongoose')
 const jwt = require('jsonwebtoken')
 const Person = require('./models/Person')
@@ -182,11 +185,25 @@ const resolvers = {
 }
 
 const app = express()
-const httpServer = http.createServer(app)
+const httpServer = createServer(app)
+
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true
+}))
+
+const schema = makeExecutableSchema({typeDefs, resolvers})
+const subscriptionServer = SubscriptionServer.create({
+  schema,
+  execute,
+  subscribe
+}, {
+  server: httpServer,
+  path: '/'
+})
 
 const server = new ApolloServer({
-  typeDefs,
-  resolvers,
+  schema,
   context: async ({req}) => {
     const auth = req ? req.headers.authorization : null
     if(auth && auth.toLowerCase().startsWith('bearer ')){
@@ -197,15 +214,26 @@ const server = new ApolloServer({
       return { currentUser }
     }
   },
-  plugins: [ApolloServerPluginDrainHttpServer({httpServer})],
+  plugins: [{
+    async serverWillStart() {
+      return {
+        async drainServer() {
+          subscriptionServer.close()
+        }
+      }
+    }
+  }],
 })
+
+
 
 server.start().then(() => [
   server.applyMiddleware({
-    app,
-    path: '/'
+    app
   })
 ])
 
-httpServer.listen({port: 4000})
-console.log(`Server ready at http://localhost:4000${server.graphqlPath}`)
+const PORT = 4000
+httpServer.listen(PORT, () => {
+  console.log(`Server ready at http://localhost:${PORT}${server.graphqlPath}`)
+})
