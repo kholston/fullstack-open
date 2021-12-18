@@ -6,16 +6,16 @@ const schema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-    minlength: 5
+    minlength: 3
   },
   phone: {
     type: String,
-    minlength: 5
+    minlength: 7
   },
   street: {
     type: String,
     required: true,
-    minlength: 5
+    minlength: 2
   },
   city: {
     type: String,
