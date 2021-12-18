@@ -15,7 +15,7 @@ const Persons = ({persons}) => {
     if(result.data){
       setPerson(result.data.findPerson)
     }
-  }, [result])
+  }, [result.data])
 
   if(person) {
     return(
