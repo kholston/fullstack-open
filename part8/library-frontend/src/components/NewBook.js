@@ -1,24 +1,36 @@
 import React, { useState } from 'react'
-import { useMutation } from '@apollo/client'
+import { useMutation, useApolloClient } from '@apollo/client'
 import { CREATE_BOOK, ALL_BOOKS } from '../queries'
-import Notification from './Notification'
+import { includedIn } from '../utilities/helpers'
 
-const NewBook = (props) => {
+const NewBook = ({notify, show}) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [published, setPublished] = useState('')
   const [genre, setGenre] = useState('')
   const [genres, setGenres] = useState([])
-  const [messages, setMessages] = useState(null)
 
+  const client = useApolloClient()
   const [createBook] = useMutation(CREATE_BOOK, {
     refetchQueries: [{query: ALL_BOOKS}],
     onError: (error) => {
       notify(error.graphQLErrors[0].message)
+    },
+    update: (store, response) => {
+      const addedBook = response.data.addBook
+      const dataInStore = client.readQuery({query: ALL_BOOKS})
+      if(!includedIn(dataInStore.allBooks, addedBook)){
+        client.writeQuery({
+          query: ALL_BOOKS,
+          data: {allBooks: dataInStore.allBooks.concat(addedBook)}
+        })
+      }
     }
   })
 
-  if (!props.show) {
+
+
+  if (!show) {
     return null
   }
 
@@ -36,13 +48,6 @@ const NewBook = (props) => {
     setGenre('')
   }
 
-  const notify = (messages) => {
-    setMessages(messages)
-    setTimeout(() => {
-      setMessages(null)
-    }, 10000)
-  }
-
   const addGenre = () => {
     setGenres(genres.concat(genre))
     setGenre('')
@@ -50,7 +55,6 @@ const NewBook = (props) => {
 
   return (
     <div>
-      <Notification messages={messages}/>
       <form onSubmit={submit}>
         <div>
           title

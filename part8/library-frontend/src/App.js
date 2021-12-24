@@ -1,43 +1,27 @@
-import React, { useState, useEffect } from 'react'
-import { useLazyQuery, useQuery } from '@apollo/client'
+import React, { useState } from 'react'
 import Authors from './components/Authors'
 import Books from './components/Books'
 import LoginForm from './components/LoginForm'
 import NewBook from './components/NewBook'
 import Recommend from './components/Recommend'
-import { ALL_BOOKS, GET_USER } from './queries'
+import Notification from './components/Notification'
 
 const App = () => {
   const [page, setPage] = useState('authors')
   const [token, setToken] = useState(null)
-  const [user, setUser] = useState(null)
-  const [books, setBooks] = useState([])
+  const [notifications, setNotifications] = useState([])
 
-  const bookQuery =  useQuery(ALL_BOOKS, {
-    pollInterval: 3000
-  })
-
-  const [getUser, userQuery] = useLazyQuery(GET_USER) 
-
-  useEffect(() => {
-    if(bookQuery.data){
-      setBooks(bookQuery.data.allBooks)
-    }
-  }, [bookQuery.data]) //eslint-disable-line
-
-  useEffect(()=>{
-    if(token){
-      getUser({})
-      if(userQuery.data){
-        setUser(userQuery.data.me)
-      }
-    }
-  } ,[token, userQuery.data]) // eslint-disable-line
+  const notify = (messages) => {
+    setNotifications(notifications.concat(messages))
+    setTimeout(() => {
+      setNotifications([])
+    }, 10000)
+  }
 
   const logout = () => {
     setToken(null)
-    setUser(null)
     localStorage.removeItem('library-user-token')
+    notify({message: 'successfully logged out', color: 'green'})
     setPage('authors')
   }
 
@@ -50,32 +34,31 @@ const App = () => {
         {token ? <button onClick={() => setPage('recommend')}>recommend</button> : null}
         {token ? <button onClick={logout}>logout</button> : <button onClick={() => setPage('login')}>login</button>}
       </div>
-
+      <Notification notifications={notifications}/>
       <Authors
         show={page === 'authors'}
         token={token}
+        notify={notify}
       />
 
       <Books
         show={page === 'books'}
-        books={books}
       />
 
       <NewBook
         show={page === 'add'}
+        notify={notify}
       />
 
       <LoginForm
         show={page === 'login'}
         setToken={setToken}
-        setError={null}
+        notify={notify}
         setPage={setPage}
       />
 
       <Recommend 
         show={page === 'recommend'}
-        books={books}
-        favoriteGenre={user ? user.favoriteGenre : null}
       />
 
     </div>
