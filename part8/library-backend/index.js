@@ -25,6 +25,8 @@ mongoose.connect(MONGODB_URI)
     console.log('error connenting to MongoDB:', error.message)
   })
 
+mongoose.set('debug', true)
+
 const typeDefs = gql`
   type Book {
     title: String!
@@ -134,7 +136,7 @@ const resolvers = {
       if(!currentUser){
         throw new AuthenticationError("not authenticated")
       }
-
+      
       try {
         let bookAuthor = await Author.findOne({name: args.author})
         if(!bookAuthor){
@@ -145,12 +147,14 @@ const resolvers = {
         }
 
         bookAuthor = bookAuthor.toJSON()
-        const book = await new Book({...args, author: bookAuthor._id}).save()
+        let book = await new Book({...args, author: bookAuthor._id}).save()
         book = await book.populate('author')
-        
+      
         pubsub.publish('BOOK_ADDED', { bookAdded: book })
-        return 
+        
+        return book
       } catch (error) {
+        console.log('it keeps hitting the error')
         throw new UserInputError(error.message, {
           invalidArgs: args
         })
@@ -213,7 +217,6 @@ const resolvers = {
       }
 
       pubsub.publish('LOGGED_IN', {loggedIn: user})
-
       return { value: jwt.sign(userForToken, JWT_SECRET) }
     }
   },

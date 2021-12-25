@@ -3,7 +3,7 @@ import { useMutation, useApolloClient } from '@apollo/client'
 import { CREATE_BOOK, ALL_BOOKS } from '../queries'
 import { includedIn } from '../utilities/helpers'
 
-const NewBook = ({notify, show}) => {
+const NewBook = ({notify, show, setPage}) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [published, setPublished] = useState('')
@@ -39,13 +39,13 @@ const NewBook = ({notify, show}) => {
 
     await createBook({ variables:{title, author, published, genres } })
 
-    notify([{message: 'book created sucessfully', color: 'green'}])
 
     setTitle('')
-    setPublished(0)
+    setPublished('')
     setAuthor('')
     setGenres([])
     setGenre('')
+    setPage('books')
   }
 
   const addGenre = () => {

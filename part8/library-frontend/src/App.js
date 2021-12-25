@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
+import { useSubscription } from '@apollo/client'
 import Authors from './components/Authors'
 import Books from './components/Books'
 import LoginForm from './components/LoginForm'
 import NewBook from './components/NewBook'
 import Recommend from './components/Recommend'
 import Notification from './components/Notification'
+import { BOOK_ADDED } from './queries'
 
 const App = () => {
   const [page, setPage] = useState('authors')
@@ -24,6 +26,13 @@ const App = () => {
     notify({message: 'successfully logged out', color: 'green'})
     setPage('authors')
   }
+
+  useSubscription(BOOK_ADDED,{
+    onSubscriptionData: ({subscriptionData}) => {
+      console.log('subscription data', subscriptionData.bookAdded)
+      notify({message: 'book created sucessfully', color: 'green'})
+    }
+  })
 
   return (
     <div>
@@ -48,6 +57,7 @@ const App = () => {
       <NewBook
         show={page === 'add'}
         notify={notify}
+        setPage={setPage}
       />
 
       <LoginForm

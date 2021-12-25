@@ -103,3 +103,11 @@ export const AUTHOR_ADDED = gql`
   ${AUTHOR_DETAILS}
 `
 
+export const BOOK_ADDED = gql`
+  subscription{
+    bookAdded {
+      ...BookDetails
+    }
+  }
+  ${BOOK_DETAILS}
+`
