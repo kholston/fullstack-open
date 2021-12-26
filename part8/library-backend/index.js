@@ -136,7 +136,7 @@ const resolvers = {
       if(!currentUser){
         throw new AuthenticationError("not authenticated")
       }
-      
+
       try {
         let bookAuthor = await Author.findOne({name: args.author})
         if(!bookAuthor){
@@ -154,7 +154,6 @@ const resolvers = {
         
         return book
       } catch (error) {
-        console.log('it keeps hitting the error')
         throw new UserInputError(error.message, {
           invalidArgs: args
         })

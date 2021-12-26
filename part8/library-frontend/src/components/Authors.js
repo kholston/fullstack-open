@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from 'react'
-import { useQuery } from '@apollo/client'
+import { useLazyQuery } from '@apollo/client'
 import { ALL_AUTHORS } from '../queries'
 import BirthYearForm from './BirthYearForm'
 
 const Authors = ({notify, show, token}) => {
   const [authors, setAuthors] = useState([])
-  const result = useQuery(ALL_AUTHORS) 
+  const [getAuthors ,authorQuery] = useLazyQuery(ALL_AUTHORS) 
+
+  useEffect(()=>{
+    getAuthors()
+  }, []) // eslint-disable-line
 
   useEffect(() => {
-    if(result.data){
-      setAuthors(result.data.allAuthors)
+    if(authorQuery.data){
+      setAuthors(authorQuery.data.allAuthors)
     }
-  }, [result.data])
+  }, [authorQuery.data])
   
   if (!show) {
     return null

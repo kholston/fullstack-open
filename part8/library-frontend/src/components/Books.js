@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { useLazyQuery, useQuery } from '@apollo/client'
-import { ALL_BOOKS } from '../queries'
+import { useLazyQuery, useSubscription } from '@apollo/client'
+import { ALL_BOOKS, BOOK_ADDED } from '../queries'
 
 
 const Books = ({show}) => {
@@ -17,25 +17,38 @@ const Books = ({show}) => {
     margin: "5px"
   }
   
-  const initialBooks = useQuery(ALL_BOOKS)
+  const [getAllBooks, allBooks ] = useLazyQuery(ALL_BOOKS)
   const [getBooksByGenre, bookGenreQuery] = useLazyQuery(ALL_BOOKS)
+
+  // update books when component renders
+  useEffect(()=>{
+    getAllBooks({variables:{genres: null}})
+  }, []) // eslint-disable-line
 
   // sets genres and books when component is rendered
   useEffect(()=>{
-    if(initialBooks.data){
-      const result = initialBooks.data.allBooks
+    if(allBooks.data){
+      const result = allBooks.data.allBooks
       setBooks(result)
       setGenres(
         Array.from(new Set( result.map(b => b.genres).flat() ))
       )
     }
-  }, [initialBooks.data]) //eslint-disable-line
+  }, [allBooks.data]) //eslint-disable-line
 
+  // get books when a genre button is clicked
   useEffect(()=>{
     if(bookGenreQuery.data){
       setBooks(bookGenreQuery.data.allBooks)
     }
   }, [bookGenreQuery.data])
+
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: ({subscriptionData}) => {
+      setFilter('all genres')
+      getAllBooks({variables: {genres: null}})
+    }
+  })
 
   const genreClick = (event) => {
     const genre = event.target.innerText

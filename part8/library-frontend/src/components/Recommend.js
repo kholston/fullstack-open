@@ -1,6 +1,6 @@
 import React , { useState, useEffect } from 'react'
 import { useSubscription, useLazyQuery } from '@apollo/client'
-import { ALL_BOOKS, LOGGED_IN } from '../queries'
+import { ALL_BOOKS, BOOK_ADDED, LOGGED_IN } from '../queries'
 
 
 const Recommend = ({ show }) => {
@@ -21,6 +21,12 @@ const Recommend = ({ show }) => {
         setFavoriteGenre(favorite)
         getBooks({variables: {genres: [favorite]}})
       }
+    }
+  })
+
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData:({subscriptionData})=> {
+      getBooks({variables: {genres: [favoriteGenre]}})
     }
   })
 

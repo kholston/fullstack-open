@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
-import { useMutation, useApolloClient } from '@apollo/client'
+import { useMutation } from '@apollo/client'
 import { CREATE_BOOK, ALL_BOOKS } from '../queries'
-import { includedIn } from '../utilities/helpers'
 
 const NewBook = ({notify, show, setPage}) => {
   const [title, setTitle] = useState('')
@@ -10,21 +9,11 @@ const NewBook = ({notify, show, setPage}) => {
   const [genre, setGenre] = useState('')
   const [genres, setGenres] = useState([])
 
-  const client = useApolloClient()
   const [createBook] = useMutation(CREATE_BOOK, {
     refetchQueries: [{query: ALL_BOOKS}],
     onError: (error) => {
+      console.log(error)
       notify(error.graphQLErrors[0].message)
-    },
-    update: (store, response) => {
-      const addedBook = response.data.addBook
-      const dataInStore = client.readQuery({query: ALL_BOOKS})
-      if(!includedIn(dataInStore.allBooks, addedBook)){
-        client.writeQuery({
-          query: ALL_BOOKS,
-          data: {allBooks: dataInStore.allBooks.concat(addedBook)}
-        })
-      }
     }
   })
 
