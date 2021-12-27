@@ -29,7 +29,6 @@ const App = () => {
 
   useSubscription(BOOK_ADDED,{
     onSubscriptionData: ({subscriptionData}) => {
-      console.log('subscription data', subscriptionData.bookAdded)
       notify({message: 'book created sucessfully', color: 'green'})
     }
   })

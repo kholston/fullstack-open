@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { useLazyQuery } from '@apollo/client'
-import { ALL_AUTHORS } from '../queries'
+import { useLazyQuery, useSubscription } from '@apollo/client'
+import { ALL_AUTHORS, BOOK_ADDED } from '../queries'
 import BirthYearForm from './BirthYearForm'
 
 const Authors = ({notify, show, token}) => {
@@ -16,6 +16,12 @@ const Authors = ({notify, show, token}) => {
       setAuthors(authorQuery.data.allAuthors)
     }
   }, [authorQuery.data])
+
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: () => {
+      getAuthors()
+    }
+  })
   
   if (!show) {
     return null

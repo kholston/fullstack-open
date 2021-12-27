@@ -25,8 +25,6 @@ mongoose.connect(MONGODB_URI)
     console.log('error connenting to MongoDB:', error.message)
   })
 
-mongoose.set('debug', true)
-
 const typeDefs = gql`
   type Book {
     title: String!
@@ -121,13 +119,12 @@ const resolvers = {
     } 
   ,
     allAuthors: async (root, args) => {
-      return await Author.find({})
+      return await Author.find({}).populate('books')
     },
   },
   Author: {
     bookCount: async (root) => {
-      const authorBooks = await Book.find({author: root._id})
-      return authorBooks.length
+      return root.books.length
     }
   },
   Mutation: {
@@ -147,8 +144,8 @@ const resolvers = {
         }
 
         bookAuthor = bookAuthor.toJSON()
-        let book = await new Book({...args, author: bookAuthor._id}).save()
-        book = await book.populate('author')
+        const book = await (await new Book({...args, author: bookAuthor._id}).save()).populate('author')
+        await Author.findByIdAndUpdate(bookAuthor._id,{...bookAuthor, books: bookAuthor.books.concat(book._id)})
       
         pubsub.publish('BOOK_ADDED', { bookAdded: book })
         
@@ -283,3 +280,23 @@ httpServer.listen(PORT, () => {
   console.log(`Server ready at http://localhost:${PORT}${server.graphqlPath}`)
   console.log(`Subscriptions ready at ws://localhost:${PORT}${server.graphqlPath}`)
 })
+
+
+// const updateAuthors = async () => {
+//   console.log('Start')
+//   try {
+//     console.log('Searching for authors')
+//     const authors = await Author.find({}).exec()
+//     authors.forEach(async author => {
+//       const books = await Book.find({author: author._id}).exec()
+//       const bookIds = books.map(b => b._id)
+//       const editedAuthor = {...author.toJSON(), books: author.books.concat(bookIds)}
+//       await Author.findByIdAndUpdate(author.id, editedAuthor)
+//     })
+//     console.log('Authors', authors)
+//   } catch (error) {
+//     console.log(error)
+//   }
+// }
+
+// updateAuthors()
