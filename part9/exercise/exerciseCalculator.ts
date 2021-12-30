@@ -8,6 +8,29 @@ interface Result {
   average: number
 }
 
+interface ExerciseInput {
+  exerciseTarget: number,
+  exerciseHours: number[]
+}
+
+const parseInput = (args: Array<string> ): ExerciseInput => {
+  if(args.length < 4) throw new Error('Not Enough Arguments')
+
+  const input = args.slice(2)
+
+  const allNumbers = input.every((currentValue) => !isNaN(Number(currentValue)))
+
+  if(allNumbers){
+    return {
+      exerciseTarget: Number(input[0]),
+      exerciseHours: input.slice(1).map(i => Number(i))
+    }
+  } else {
+    throw new Error('Invalid Input. please input all numbers')
+  }
+
+}
+
 const calculateRating = (exerciseAverageTime: number, exerciseTargetTime: number): number => {
   const targetHalved = (exerciseTargetTime / 2)
   if(exerciseAverageTime < targetHalved){
@@ -26,7 +49,7 @@ const calculateExercises = (exerciseHours: number[], exerciseTarget: number): Re
   const trainingDays = exerciseHours.filter(d => d > 0).length
   const originalTarget = exerciseTarget
   const exerciseAvgTime = (exerciseHours.reduce((previous, current) => previous + current))/ exerciseHours.length
-  const wasTargetReached = exerciseAvgTime === originalTarget
+  const wasTargetReached = exerciseAvgTime >= originalTarget
 
   const hoursRating = calculateRating(exerciseAvgTime, exerciseTarget)
 
@@ -59,6 +82,13 @@ const calculateExercises = (exerciseHours: number[], exerciseTarget: number): Re
   return result
 }
 
-const dailyExerciseHours = [3,0,2,4.5,0,3,1]
-console.log('Exercise Hours:', dailyExerciseHours, 'Target:', 2)
-console.log('Exercise Info:', calculateExercises(dailyExerciseHours, 2))
+try {
+  const {exerciseTarget, exerciseHours} = parseInput(process.argv)
+  console.log(calculateExercises(exerciseHours, exerciseTarget))
+} catch (error) {
+  let errorMessage = 'Something bad happened'
+  if(error instanceof Error) {
+    errorMessage += ' Error: ' + error.message
+  }
+  console.log(errorMessage)
+}

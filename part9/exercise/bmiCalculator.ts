@@ -6,27 +6,58 @@
   obese 30 or more
   */
 
+interface HeightWeight {
+  height: number;
+  weight: number;
+}
+
+const parseArguments = (args: Array<string>) : HeightWeight => {
+  if(args.length < 4) throw new Error('Not Enough Arguments')
+  if(args.length > 4) throw new Error('Too many arguments')
+
+  if(!isNaN(Number(args[2])) && !isNaN(Number(args[3]))){
+    return {
+      height: Number(args[2]),
+      weight: Number(args[3])
+    }
+  } else {
+    throw new Error('Invalid input. input only numbers.')
+  }
+  
+}
+
 const calculateBmi = (height: number, weight: number) : string => {
   if (height <= 0 || weight <= 0){
     return 'Provided values must be greater than zero'
   }
-
+  console.log(`Height: ${height}cm  Weight: ${weight}kg`)
+  
   const meters = height / 100
 
   const result = (weight / meters ** 2);
-
+  let explanation;
   if (result < 18.5) {
-    return 'Underweight'
+    explanation = 'Underweight'
   } else if (result >= 18.5 && result <= 24.9) {
-    return 'Normal (healthy weight)'
+    explanation = 'Normal (healthy weight)'
   } else if (result >= 25 && result <= 29.9) {
-    return 'Overweight'
+    explanation = 'Overweight'
   } else if (result > 30) {
-    return 'Obese'
+    explanation = 'Obese'
   } else {
-    return 'Something bad happened.'
+    explanation = 'Something bad happened.'
   }
+
+  console.log(`BMI Result: ${explanation}`)
 }
 
-console.log('Height: 180cm  Weight: 74kg')
-console.log(calculateBmi(180,74));
+try {
+  const {height, weight} = parseArguments(process.argv);
+  calculateBmi(height, weight)
+} catch (error) {
+  let errorMessage = 'Something bad happened';
+  if(error instanceof Error) {
+    errorMessage += ' Error: ' + error.message
+  }
+  console.log(errorMessage)
+}
