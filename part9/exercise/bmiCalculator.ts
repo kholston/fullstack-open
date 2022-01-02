@@ -26,7 +26,7 @@ const parseArguments = (args: Array<string>) : HeightWeight => {
   
 }
 
-const calculateBmi = (height: number, weight: number) : string => {
+export const calculateBmi = (height: number, weight: number) : string => {
   if (height <= 0 || weight <= 0){
     return 'Provided values must be greater than zero'
   }
@@ -48,7 +48,7 @@ const calculateBmi = (height: number, weight: number) : string => {
     explanation = 'Something bad happened.'
   }
 
-  console.log(`BMI Result: ${explanation}`)
+  return `BMI Result: ${explanation}`
 }
 
 try {
