@@ -1,9 +1,8 @@
 {
-  "name": "flight_diary",
+  "name": "patientor-backend",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "private": true,
   "scripts": {
     "tsc": "tsc",
     "dev": "ts-node-dev index.ts",
@@ -11,7 +10,7 @@
     "start": "node build/index.js"
   },
   "keywords": [],
-  "author": "Ken Holston",
+  "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/express": "^4.17.13",
