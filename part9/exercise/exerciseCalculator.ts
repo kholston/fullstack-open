@@ -1,4 +1,4 @@
-interface Result {
+export interface ExerciseResult {
   periodLength: number,
   trainingDays: number,
   success: boolean,
@@ -8,28 +8,10 @@ interface Result {
   average: number
 }
 
-interface ExerciseInput {
-  exerciseTarget: number,
-  exerciseHours: number[]
+export interface ExerciseInput {
+  daily_exercises: number[],
+  target: number
 }
-
-const parseInput = (args: Array<string> ): ExerciseInput => {
-  if(args.length < 4) throw new Error('Not Enough Arguments');
-
-  const input = args.slice(2);
-
-  const allNumbers = input.every((currentValue) => !isNaN(Number(currentValue)));
-
-  if(allNumbers){
-    return {
-      exerciseTarget: Number(input[0]),
-      exerciseHours: input.slice(1).map(i => Number(i))
-    };
-  } else {
-    throw new Error('Invalid Input. please input all numbers');
-  }
-
-};
 
 const calculateRating = (exerciseAverageTime: number, exerciseTargetTime: number): number => {
   const targetHalved = (exerciseTargetTime / 2);
@@ -44,14 +26,21 @@ const calculateRating = (exerciseAverageTime: number, exerciseTargetTime: number
   }
 };
 
-const calculateExercises = (exerciseHours: number[], exerciseTarget: number): Result => {
-  const exerciseDays = exerciseHours.length;
-  const trainingDays = exerciseHours.filter(d => d > 0).length;
-  const originalTarget = exerciseTarget;
-  const exerciseAvgTime = (exerciseHours.reduce((previous, current) => previous + current))/ exerciseHours.length;
+export const inputIsValid = (input : number[]): boolean => {
+  const allNumbers = input.every((currentValue => !isNaN(Number(currentValue))));
+  return allNumbers;
+};
+
+export const calculateExercises = (exerciseInput: ExerciseInput): ExerciseResult => {
+  const {target, daily_exercises} = exerciseInput;
+
+  const exerciseDays = daily_exercises.length;
+  const trainingDays = daily_exercises.filter(d => d > 0).length;
+  const originalTarget = target;
+  const exerciseAvgTime = (daily_exercises.reduce((previous, current) => previous + current))/ daily_exercises.length;
   const wasTargetReached = exerciseAvgTime >= originalTarget;
 
-  const hoursRating = calculateRating(exerciseAvgTime, exerciseTarget);
+  const hoursRating = calculateRating(exerciseAvgTime, target);
 
   let explanation;
   switch(hoursRating){
@@ -81,14 +70,3 @@ const calculateExercises = (exerciseHours: number[], exerciseTarget: number): Re
 
   return result;
 };
-
-try {
-  const {exerciseTarget, exerciseHours} = parseInput(process.argv);
-  console.log(calculateExercises(exerciseHours, exerciseTarget));
-} catch (error) {
-  let errorMessage = 'Something bad happened';
-  if(error instanceof Error) {
-    errorMessage += ' Error: ' + error.message;
-  }
-  console.log(errorMessage);
-}
