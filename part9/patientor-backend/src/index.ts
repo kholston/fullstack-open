@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import diagnosesRouter from './routes/diagnoses';
 
 const allowedOrigins: string[] = ['http://localhost:3000'];
 const options: cors.CorsOptions = {
@@ -15,6 +16,8 @@ app.get('/api/ping', (_req,res) => {
   console.log('someone pinged here');
   res.send('pong');
 });
+
+app.use('/api/diagnoses', diagnosesRouter);
 
 const PORT = 3001;
 
