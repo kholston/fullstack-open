@@ -1,5 +1,7 @@
 import express from 'express';
 import patientService from '../services/patientService';
+import { Fields } from '../types';
+import toNewPatient from '../utils';
 
 const patientRouter = express.Router();
 
@@ -8,16 +10,17 @@ patientRouter.get('/', (_req, res) => {
 });
 
 patientRouter.post('/', (req, res) => {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const {name, dateOfBirth, ssn, gender, occupation} = req.body;
-  const newPatient = patientService.addPatient({
-    name,
-    dateOfBirth,
-    ssn,
-    gender,
-    occupation
-  });
-  res.json(newPatient);
+  try {
+    const patient = toNewPatient(req.body as Fields);
+    const newPatient = patientService.addPatient(patient);
+    res.json(newPatient);
+  } catch (error) {
+    let errorMessage = 'Something went wrong. ';
+    if(error instanceof Error){
+      errorMessage += ' Error: ' + error.message;
+    }
+    res.status(400).send(errorMessage);
+  }
 });
 
 
