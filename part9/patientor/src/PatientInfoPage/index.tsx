@@ -5,7 +5,7 @@ import {Container, Icon, SemanticICONS} from 'semantic-ui-react';
 
 import { apiBaseUrl } from '../constants';
 import { Patient, Gender } from '../types';
-import { useStateValue } from '../state';
+import { setCurrentPatient, useStateValue } from '../state';
 
 const PatientInfoPage = () => {
   const {id} = useParams<{id: string}>();
@@ -14,7 +14,7 @@ const PatientInfoPage = () => {
   const setPatient =  async () => {
     try {
       const {data: requestedPatient} = await axios.get<Patient>(`${apiBaseUrl}/patients/${id}`);
-      dispatch({type: "SET_PATIENT", payload: requestedPatient});
+      dispatch(setCurrentPatient(requestedPatient));
     } catch (e) {
       console.error(e.response?.data || 'Unknown Error');
     }
@@ -40,7 +40,7 @@ const PatientInfoPage = () => {
         return 'venus';
       case 'other':
       default:
-        return 'mars';
+        return 'other gender';
     }
   };
 
