@@ -10,6 +10,7 @@ import { setCurrentPatient, useStateValue } from '../state';
 const PatientInfoPage = () => {
   const {id} = useParams<{id: string}>();
   const [{patient}, dispatch] = useStateValue();
+  const [{diagnoses}] = useStateValue();
 
   const setPatient =  async () => {
     try {
@@ -70,8 +71,8 @@ const PatientInfoPage = () => {
                 {entry.date} {entry.description}
               </p>
               <ul>
-                {entry.diagnosisCodes && entry.diagnosisCodes.map(diagnosis => (
-                  <li key={diagnosis}>{diagnosis}</li>
+                {entry.diagnosisCodes && entry.diagnosisCodes.map(diagnosisCode => (
+                  <li key={diagnosisCode}>{diagnosisCode} {diagnoses && diagnoses[diagnosisCode].name}</li>
                 ))}
               </ul>
               </div>
