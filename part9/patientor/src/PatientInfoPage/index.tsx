@@ -6,11 +6,11 @@ import {Container, Icon, SemanticICONS} from 'semantic-ui-react';
 import { apiBaseUrl } from '../constants';
 import { Patient, Gender } from '../types';
 import { setCurrentPatient, useStateValue } from '../state';
+import EntryDetails from '../components/EntryDetails';
 
 const PatientInfoPage = () => {
   const {id} = useParams<{id: string}>();
   const [{patient}, dispatch] = useStateValue();
-  const [{diagnoses}] = useStateValue();
 
   const setPatient =  async () => {
     try {
@@ -62,20 +62,12 @@ const PatientInfoPage = () => {
             occupation: {patient.occupation} <br/>
             date of birth: {patient.dateOfBirth}
         </h5>
-        <h4>entries</h4>
+
+        {patient.entries.length > 0 && <h4>entries</h4>}
         {
           patient.entries.map(entry => {
             return(
-              <div key={entry.id}>
-                <p>
-                {entry.date} {entry.description}
-              </p>
-              <ul>
-                {entry.diagnosisCodes && entry.diagnosisCodes.map(diagnosisCode => (
-                  <li key={diagnosisCode}>{diagnosisCode} {diagnoses && diagnoses[diagnosisCode].name}</li>
-                ))}
-              </ul>
-              </div>
+              <EntryDetails  key={entry.id} entry={entry}/>
             );
           })
         }
