@@ -1,7 +1,7 @@
 import express from 'express';
 import patientService from '../services/patientService';
-import { EntryFields, PatientFields } from '../types';
-import {toNewPatient, toNewEntry } from '../utils';
+import { Fields } from '../types';
+import toNewPatient from '../utils';
 
 const patientRouter = express.Router();
 
@@ -11,7 +11,7 @@ patientRouter.get('/', (_req, res) => {
 
 patientRouter.post('/', (req, res) => {
   try {
-    const patient = toNewPatient(req.body as PatientFields);
+    const patient = toNewPatient(req.body as Fields);
     const newPatient = patientService.addPatient(patient);
     res.json(newPatient);
   } catch (error) {
@@ -32,19 +32,5 @@ patientRouter.get('/:id', (req,res) => {
   }
 });
 
-patientRouter.post('/:id/entries', (req,res) => {
-  try {
-    const id = req.params.id;
-    const entry = toNewEntry(req.body as EntryFields);
-    const updatedPatient = patientService.addEntry(id, entry);
-    res.json(updatedPatient);
-  } catch(error) {
-    let errorMessage = 'Something went wrong. ';
-    if(error instanceof Error){
-      errorMessage += ' Error: ' + error.message;
-    }
-    res.status(400).send(errorMessage);
-  }
-});
 
 export default patientRouter;

@@ -31,14 +31,9 @@ const PatientListPage = () => {
       );
       dispatch(addPatient(newPatient));
       closeModal();
-    } catch (e: unknown) {
-      let errorMessage = 'Something went wrong.';
-      if(axios.isAxiosError(e) && e.response) {
-        console.error(e.response.data);
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        errorMessage = e.response.data.error;
-      }
-      setError(errorMessage);
+    } catch (e) {
+      console.error(e.response?.data || 'Unknown Error');
+      setError(e.response?.data?.error || 'Unknown error');
     }
   };
 
