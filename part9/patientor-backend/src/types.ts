@@ -19,7 +19,7 @@ interface BaseEntry {
 }
 
 export enum HealthCheckRating {
-  "HEALTHY" = 0,
+  "Healthy" = 0,
   "LowRisk" = 1,
   "HighRisk" = 2,
   "CriticalRisk" = 3
@@ -30,7 +30,7 @@ interface HealthCheckEntry extends BaseEntry {
   healthCheckRating: HealthCheckRating;
 }
 
-type SickLeave = {
+export type SickLeave = {
   startDate: string;
   endDate: string;
 };
@@ -41,7 +41,7 @@ interface OccupationalHealthcareEntry extends BaseEntry {
   sickLeave?: SickLeave; 
 }
 
-type Discharge ={
+export type Discharge ={
   date: string;
   criteria: string;
 };
@@ -65,7 +65,7 @@ export type Patient = {
   id: string;
 };
 
-export type Fields = {
+export type PatientFields = {
   name: unknown;
   dateOfBirth: unknown;
   ssn: unknown;
@@ -73,6 +73,24 @@ export type Fields = {
   occupation: unknown;
 };
 
+export type BaseEntryFields = {
+  description: unknown;
+  date: unknown;
+  specialist: unknown;
+};
+
+
+export type EntryFields = {
+  type: unknown;
+  description: unknown;
+  date: unknown;
+  specialist: unknown;
+  diagnosisCodes?: unknown;
+  healthCheckRating?: unknown;
+  employerName?: unknown;
+  sickLeave?: unknown;
+  discharge?: unknown;
+};
 
 
 export type  NewPatient = Omit<Patient, 'id'>;
@@ -85,3 +103,4 @@ export type PublicPatient = Omit<Patient, 'ssn' | 'entries'>;
 type UnionOmit<T, K extends string | number | symbol> = T extends unknown ? Omit<T, K> : never;
 // Define Entry without the 'id' property
 export type EntryWithoutId = UnionOmit<Entry, 'id'>;
+export type BaseEntryWithoutId = Omit<BaseEntry, 'id'>;
