@@ -18,7 +18,12 @@ export type Action =
   | {
       type: "SET_DIAGNOSIS_LIST";
       payload: Diagnosis[];
+    }
+  | {
+      type: "UPDATE_PATIENT";
+      payload: Patient;
     };
+    
 
 export const setPatientList = (patients: Patient[]): Action => {
   return {
@@ -48,6 +53,12 @@ export const setDiagnosisList = (diagnoses: Diagnosis[]): Action => {
   };
 };
 
+export const updatePatient = (patient: Patient): Action => {
+  return {
+    type: "UPDATE_PATIENT",
+    payload: patient
+  };
+};
 
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -88,6 +99,14 @@ export const reducer = (state: State, action: Action): State => {
             (memo, diagnosis) => ({...memo, [diagnosis.code]: diagnosis}), {}
           )
         },
+      };
+    case "UPDATE_PATIENT":
+      return {
+        ...state,
+        patients: {
+          ...state.patients,
+          [action.payload.id]: action.payload
+        }
       };
     default:
       return state;
