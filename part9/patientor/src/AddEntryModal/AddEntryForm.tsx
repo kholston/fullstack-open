@@ -17,36 +17,77 @@ interface Props {
 
 export const AddEntryForm = ({onSubmit, onCancel}: Props) => {
   const [{diagnoses}] = useStateValue();
+  const [type,setType] =  React.useState<string>('Health Check');
+  
+
+  const baseValues = {
+    description: '',
+    date:'',
+    specialist: '',
+    diagnosisCodes: [''],
+  };
+
+  const HealthCheckInitialValues: EntryFormValues = {
+    ...baseValues,
+    type: 'HealthCheck',
+    healthCheckRating: 0
+  };
+
+  let initialValues = HealthCheckInitialValues;
+
+  React.useEffect(()=>{
+    if(type === 'Health Check' ){
+      initialValues = HealthCheckInitialValues;
+    }
+  }, [type]);
+  
+  
   return(
     <Formik
-      initialValues={{
-        type:'HealthCheck',
-        description: '',
-        date:'',
-        specialist: '',
-        diagnosisCodes: [''],
-        healthCheckRating: 0,
-      }}
+      initialValues={initialValues}
       onSubmit={onSubmit}
+      validate={values => {
+        const errors: {[field:string]: string} = {};
+        if(!values.description){
+          errors.description = 'Description is required';
+        }
+        if(!values.date){
+          errors.date = 'Date is required';
+        }
+        if(!values.specialist){
+          errors.specialist = 'Specialist name required';
+        }
+        if(type === 'Health Check'){
+          if(values.healthCheckRating > 3 || values.healthCheckRating < 0){
+            errors.healthCheckRating = 'Value must between 0 and 3';
+          }
+        }
+        return errors;
+      }}
     >
-    {({isValid, dirty, values, setFieldValue, setFieldTouched}) => {
+    {({isValid, dirty, setFieldValue, setFieldTouched}) => {
       return(
         <Form className='form ui'>
           <Grid centered>
-            <Grid.Column>
-              <Button
-                type="button"
-                onClick={() => {setFieldValue('type','HealthCheck');}}
-                color={values.type === 'HealthCheck' ? 'green': 'grey'}
-                icon
-                labelPosition='right'
-              >
-                Health Check
-                <Icon name='doctor'/>
-              </Button>
+            <Grid.Column >
+              <Button.Group>
+                <Button
+                  type="button"
+                  onClick={() => {
+                    setFieldValue('type','HealthCheck');
+                    setType('Health Check');
+                  }}
+                  color={type === 'Health Check' ? 'green': 'grey'}
+                  icon
+                  labelPosition='right'
+                >
+                  Health Check
+                  <Icon name='doctor'/>
+                </Button>
+              </Button.Group>
             </Grid.Column>
           </Grid>
-          <Header  textAlign='center'>{values.type} Entry</Header>
+          <Header  textAlign='center'>{type} Entry</Header>
           <Field
             label='Description'
             placeholder='Entry Description'
